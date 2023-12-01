@@ -22,26 +22,22 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Change to api directory
-        run: cd api
-
-      - name: Create and start virtual environment
+      - name: Change to api directory and create virtual environment
         run: |
+          cd api
           python -m venv venv
           source venv/bin/activate
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          cd api
+          pip install -r requirements.txt
 
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
       - name: Zip artifact for deployment
-        run: zip -r release.zip ./* -x venv/**
-
-      - name: Upload artifact for deployment jobs
-        uses: actions/upload-artifact@v3
-        with:
-          name: python-app
-          path: release.zip
+        run: |
+          cd api
+          zip -r release.zip ./* -x venv/**
 
   deploy:
     runs-on: ubuntu-latest
