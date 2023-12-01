@@ -1,7 +1,15 @@
+# Running the API
+
+```sh
+flask run
+```
+
 # Setting up the environment (no venv file present)
 
 ```sh
-python -m venv venv & venv/Scripts/activate & pip install -r requirements.txt
+python -m venv venv
+venv/Scripts/activate
+pip install -r requirements.txt
 ```
 
 # Setting up the environment (venv file present)
@@ -10,13 +18,13 @@ python -m venv venv & venv/Scripts/activate & pip install -r requirements.txt
 venv/Scripts/activate
 ```
 
-# Running the API
+# Updating dependencies (after a git pull)
 
 ```sh
-flask run
+pip install -r requirements.txt
 ```
 
-# Update Dependencies
+# Adding new dependencies (before a git commit)
 
 ```sh
 pip freeze > requirements.txt
