@@ -18,15 +18,15 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Python version
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: '3.12'
 
       - name: Create and start virtual environment
         run: |
           cd api
-          python -m venv venv
-          venv/scripts/activate
+          python3.12 -m venv venv
+          venv/Scripts/activate
       
       - name: Install dependencies
         run: |
