@@ -11,7 +11,7 @@ app.register_blueprint(user_api)
 app.register_blueprint(course_api)
 CORS(app)
 
-@app.route("/")
+@app.route("/status")
 def status():
     return jsonify({ 'status': 'running' }), 200
 
