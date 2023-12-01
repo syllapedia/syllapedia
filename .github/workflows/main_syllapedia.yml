@@ -37,7 +37,13 @@ jobs:
       - name: Zip artifact for deployment
         run: |
           cd api
-          zip -r release.zip ./* -x venv/**
+          zip -r ../release.zip ./* -x venv/**
+
+      - name: Upload artifact for deployment jobs
+        uses: actions/upload-artifact@v3
+        with:
+          name: python-app
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -62,3 +68,4 @@ jobs:
           app-name: 'syllapedia'
           slot-name: 'production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_322014B318EF40398A7793FD9F5286A9 }}
+          
