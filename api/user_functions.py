@@ -31,8 +31,10 @@ def get_user_data(user_id):
         return Response(status=404)
     try:
         result = users.find_one({"_id":user_id})
+        courses = []
         for course in result["courses"]:
-            course["_id"] = str(course["_id"])
+            courses.append(str(course["_id"]))
+        result["courses"] = courses
         return jsonify(result)
     except:
         return Response(status=400)
