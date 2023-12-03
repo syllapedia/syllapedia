@@ -2,6 +2,7 @@ import React from 'react';
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import MainLayout from './components/MainLayout';
 import ChatPage from './pages/ChatPage';
+import LoginPage from './pages/LoginPage';
 
 const Router = createBrowserRouter([
   {
@@ -10,7 +11,7 @@ const Router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <ChatPage />
+        element: <LoginPage />
       },
       {
         path: "*",
