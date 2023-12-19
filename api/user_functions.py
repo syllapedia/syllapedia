@@ -1,5 +1,6 @@
 from flask import Response, jsonify
-from database import db, ObjectId
+from database import db
+from bson.objectid import ObjectId
 
 courses = db["Courses"]
 users = db["Users"]

@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from apiflask import APIBlueprint
-from chatbot_functions import chatRespond
+from chatbot_functions import chat_respond
 
 chatbot_api = APIBlueprint("chatbot_api", __name__)
 
@@ -8,7 +8,7 @@ chatbot_api = APIBlueprint("chatbot_api", __name__)
 def ask_question():
     data = request.get_json()
 
-    chat_data = chatRespond(data["user_id"], data["course_id"], data["question"])
+    chat_data = chat_respond(data["user_id"], data["course_id"], data["question"])
 
     return jsonify(chat_data), 200
 
