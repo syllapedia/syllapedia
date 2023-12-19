@@ -1,6 +1,7 @@
 from flask import Response, jsonify
 import base64
-from database import db, ObjectId
+from database import db
+from bson.objectid import ObjectId
 from user_functions import add_new_course
 from pdfminer.high_level import extract_text
 
