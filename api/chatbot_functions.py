@@ -1,5 +1,5 @@
 from flask import Response
-from openai_api import openai_chat_respond
+from gemini_api import gemini_chat_respond
 from highlight import update_highlight
 from bson.objectid import ObjectId
 from database import db
@@ -14,7 +14,7 @@ def chat_respond(user_id, course_id, question):
     return Response(status=404)
 
   try:
-    response = openai_chat_respond(question, txt)
+    response = gemini_chat_respond(question, txt)
     answer = response["answer"]
   except:
     return {"answer": "Answer Failed to Complete", "valid": False}
