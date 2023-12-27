@@ -1,7 +1,7 @@
 import { UserInfo } from "../models/userModels";
 
-// const FLASK_URL = 'https://syllapedia.azurewebsites.net';
-const FLASK_URL = 'http://localhost:5000'
+const FLASK_URL = 'https://syllapedia.azurewebsites.net';
+// const FLASK_URL = 'http://localhost:5000'
 
 export const getStatus = async () => await get('/');
 
