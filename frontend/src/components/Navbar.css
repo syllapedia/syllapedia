@@ -1,0 +1,10 @@
+.navbar {
+    background-color: var(--secondary-color);
+
+    height: var(--navbar-height);
+    padding-left: 30px;
+
+    line-height: var(--navbar-height);
+    color: var(--text-color);
+    font-size: x-large;
+}

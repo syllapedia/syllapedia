@@ -1,0 +1,25 @@
+.login-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    height: var(--page-height);
+
+    background-color: var(--primary-color);
+    color: var(--text-color);
+
+    font-size: x-large;
+}
+
+.login-button-container {
+    margin: 50px;
+}
+
+.login-error-message {
+    font-size: medium;
+    font-style: italic;
+    color: var(--warning-color);
+
+    height: 10px;
+}

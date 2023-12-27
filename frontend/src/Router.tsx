@@ -11,6 +11,10 @@ const Router = createBrowserRouter([
     children: [
       {
         path: "/",
+        element: <ChatPage />
+      },
+      {
+        path: "/login",
         element: <LoginPage />
       },
       {
@@ -18,10 +22,6 @@ const Router = createBrowserRouter([
         element: <Navigate to="/" />
       }
     ]
-  },
-  {
-    path: "/error",
-    element: <h1>ERROR: INVALID PATH</h1>
   }
 ]);
 

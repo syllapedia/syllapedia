@@ -10,5 +10,6 @@ export interface UserInfo {
 export interface JWTUserInfo {
     sub: string,
     name?: string,
-    email?: string
+    email?: string,
+    hd?: string
 }
