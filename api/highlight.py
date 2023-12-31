@@ -4,12 +4,14 @@ import base64
 from user_functions import set_user
 
 def highlight_text_in_pdf(base64_pdf, texts_to_highlight):
+    # Converts blob into pdf
     pdf_data = base64.b64decode(base64_pdf)
-
     pdf_stream = io.BytesIO(pdf_data)
 
+    # Opens pdf with fitz
     doc = fitz.open(stream=pdf_stream, filetype="pdf")
 
+    # Highlights text in pdf
     for text in texts_to_highlight:
         for page in doc:
             text_instances = page.search_for(text)
@@ -22,11 +24,13 @@ def highlight_text_in_pdf(base64_pdf, texts_to_highlight):
     doc.save(output_stream)
     doc.close()
 
+    # Returns pdf converted into a blob
     return base64.b64encode(output_stream.getvalue()).decode('utf-8')
 
 def update_highlight(user_id, base64_pdf, texts_to_highlight):
-    # Create the highlighted PDF
+    # Creates highlighted pdf blob
     highlighted_base64 = highlight_text_in_pdf(base64_pdf, texts_to_highlight)
-    # Update the user's previous highlighted PDF
+    
+    # Updates the user's previous highlighted pdf
     set_user(user_id, "prevHighlight", highlighted_base64)
 

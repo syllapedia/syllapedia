@@ -8,66 +8,120 @@ from pdfminer.high_level import extract_text
 courses = db["Courses"]
 users = db["Users"]
 
+def user_exists(user_id):
+    # Checks if user exists
+    return users.count_documents({"_id": user_id}) > 0
+
+def course_exists(course_id):
+    # Checks if a course exists
+    return courses.count_documents({"_id": ObjectId(course_id)}) > 0
+
+def course_name_exists(name):
+    # Checks if a course exists
+    return courses.count_documents({"name": name}) > 0
+
+def sanitize_course(course):
+    course["_id"] = str(course["_id"])
+    return course
+
 def new_syllabus(original):
-    try:
-        with open(original, "rb") as file:
-            pdf = base64.b64encode(file.read()).decode('utf-8')
-        txt = extract_text(original)
-        return {
-            "original": pdf,
-            "pdf": pdf,
-            "txt": txt
-        }
-    except:
-        return Response(status=400)
+    # Converts original syllabus into a pdf 
+    with open(original, "rb") as file:
+        pdf = base64.b64encode(file.read()).decode('utf-8')
+
+    # Converts pdf to a string of text
+    txt = extract_text(original)
+
+    # Returns syllabi
+    return {
+        "original": pdf,
+        "pdf": pdf,
+        "txt": txt
+    }
 
 def new_course(name, user_id, syllabus):
+    # Checks if instructor exists
+    if not user_exists(user_id):
+        return Response("Could not find instructor", 404)
+    
+    # When instructor already has course name
     try:
-        course_id = ObjectId()
-        instructor = users.find_one({"_id": user_id})
-        courses.insert_one({
-            "_id": course_id,
-            "name": name,
-            "instructor": {"_id": instructor["_id"], "name": instructor["name"], "email": instructor["email"]},
-            "syllabus": new_syllabus(syllabus)
-        })
-        add_new_course(user_id, str(course_id))
-        return Response(status=200)
-    except:
-        return Response(status=400)
+        # Gets course
+        course = courses.find_one({"name": name, "instructor._id": user_id})
+
+        # Returns sanitized course
+        return sanitize_course(course), 200
+    
+    except:    
+        try:
+            # Generates course id and gets instructor
+            course_id = ObjectId()
+            instructor = users.find_one({"_id": user_id})
+
+            # Creates a new course
+            new_course = {
+                "_id": course_id,
+                "name": name,
+                "instructor": {"_id": instructor["_id"], "name": instructor["name"], "email": instructor["email"]},
+                "syllabus": new_syllabus(syllabus)
+            }
+            courses.insert_one(new_course)
+
+            # Adds new course into instructor's courses
+            add_new_course(user_id, course_id)
+
+            # Returns sanitized new course
+            return jsonify(sanitize_course(new_course)), 200
+        except:
+            return Response("Course could not be created", 400)
     
 def get_course_data(course_id):
+    # Checks if course does not exist
+    if not course_exists(course_id):
+        return Response("Course could not found", 404)
+    
     try:
-        result = courses.find_one({"_id":ObjectId(course_id)})
-        result["_id"] = course_id
-        return jsonify(result)
+        # Gets course
+        course = sanitize_course(courses.find_one({"_id": ObjectId(course_id)}))
+
+        # Returns course
+        return jsonify(course), 200
     except:
-        return Response(status=404)
+        return Response("Could not get course", 400)
     
 def set_course(course_id, key, value):
     try:
+        # Gets course
         course = courses.find_one({"_id":ObjectId(course_id)})
     except:
-        return Response(status=404)
+        return Response("Course could not be found", 404)
+    
     try:
         if key == "_id":
-            return Response(status=400)
+            return Response("Course id cannot be changed", 400)
         elif key not in course.keys():
-            return Response(status=404)
+            return Response("Invalid course key", 404)
         elif key == "syllabus":
-            value = new_syllabus(value)   
+            try:
+                value = new_syllabus(value)
+            except:
+                return Response("Invalid syllabus", 400)
+        # Updates value for key
         courses.update_one({
             "_id": ObjectId(course_id)},
             {"$set": {key: value}
         })
-        return Response(status=200)
+        
+        # Returns course
+        return get_course_data(course_id)
     except:
-        return Response(status=400)
+        return Response("Course could not be updated", 400)
 
 def delete_course_data(course_id):
     try:
+        # Deletes course
         courses.delete_one({"_id": ObjectId(course_id)})
         return Response(status=200)
     except:
-        return Response(status=404)
+        return Response("Course could not be found", 404)
     

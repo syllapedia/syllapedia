@@ -7,21 +7,21 @@ course_api = APIBlueprint("course_api", __name__)
 @course_api.route("/course", methods=["POST"])
 def create_course():
     data = request.get_json()
-
+    # Creates a course and returns the created course
     return new_course(data["name"], data["user_id"], data["syllabus"])
 
 @course_api.route("/course/<course_id>", methods=["GET"])
 def get_course(course_id):
-
+    # Returns a course
     return get_course_data(course_id)
 
 @course_api.route("/course/<course_id>", methods=["PATCH"])
 def update_course(course_id):
     data = request.get_json()
-
+    # Updates a value in a course
     return set_course(course_id, data["key"], data["value"])
 
-@course_api.route("/course/delete/<course_id>", methods=["DELETE"])
+@course_api.route("/course/<course_id>", methods=["DELETE"])
 def delete_course(course_id):
-
+    # Deletes a course
     return delete_course_data(course_id)

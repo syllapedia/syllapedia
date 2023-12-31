@@ -9,8 +9,13 @@ def create_completion_with_file(client, file, user_prompt):
     completion = client.chat.completions.create(
         model="gpt-4",
         messages=[
+            # Pre-response role
             {"role": "system", "content": "You are an academic assistant, specialized in addressing questions specifically related to the current course. Your responses are tailored to the course content and syllabus, and you provide sources from the course material. You focus solely on assisting with course-related queries."},
+            
+            # Syllabus
             {"role": "user", "content": file},
+            
+            # Question
             {"role": "user", "content": user_prompt}
         ]
     )
@@ -30,10 +35,15 @@ def openai_chat_respond(question, txt):
   """ % (question)
 
   try:
+    # Gets OpenAI response
     completion = create_completion_with_file(OpenAI(), txt, prompt)
+    
+    # Converts response into a json object
     response = json.loads(completion.choices[0].message.content)
     answer = response["answer"]
     sources = response["sources"]
+    
+    # Returns answer, sources, and whether response executed successfully
     return {"answer": answer, "sources": sources, "valid": True}
   except:
     return {"answer": "Response Failed to Complete", "sources": "Response Failed to Complete", "valid": False}
