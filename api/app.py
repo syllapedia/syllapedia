@@ -13,7 +13,8 @@ CORS(app)
 
 @app.route("/")
 def status():
-    return jsonify({ 'status': 'running' }), 200
+    # Returns a response indicating the server is running
+    return jsonify({"status": "running"}), 200
 
 if __name__ == "__main__":
     app.run()

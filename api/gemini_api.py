@@ -24,12 +24,17 @@ def gemini_chat_respond(question, txt):
     """ % (txt, question)
     ]
     try:
+        # Gets Gemini response
         genai.configure(api_key="AIzaSyCbU8m8uacogSPwrcITcZEtw5ILxEA7v6w")
         model = genai.GenerativeModel(model_name="gemini-pro")
         content = model.generate_content(prompt_parts)
+
+        # Converts response into a json object
         response = json.loads(content.text)
         answer = response["answer"]
         sources = response["sources"]
+        
+        # Returns answer, sources, and whether response executed successfully
         return {"answer": answer, "sources": sources, "valid": True}
     except:
         return {"answer": "Response Failed to Complete", "sources": "Response Failed to Complete", "valid": False}
