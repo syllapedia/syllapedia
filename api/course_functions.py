@@ -39,14 +39,16 @@ def new_syllabus(original):
         "txt": txt
     }
 
-def new_course(name, user_id, syllabus):
-    # Checks if instructor exists
+def new_course(subject, course_number, course_title, user_id, syllabus):
+    # Checks if instructor does not exist
     if not user_exists(user_id):
         return Response("Could not find instructor", 404)
     
-    # When instructor already has course name
+    # Creates course name
+    name = subject + course_number + " - " + course_title
+
     try:
-        # Gets course
+        # Gets course by name and instructor
         course = courses.find_one({"name": name, "instructor._id": user_id})
 
         # Returns sanitized course
@@ -62,6 +64,9 @@ def new_course(name, user_id, syllabus):
             new_course = {
                 "_id": course_id,
                 "name": name,
+                "subject": subject,
+                "course_number": course_number,
+                "course_title": course_title,
                 "instructor": {"_id": instructor["_id"], "name": instructor["name"], "email": instructor["email"]},
                 "syllabus": new_syllabus(syllabus)
             }

@@ -1,5 +1,5 @@
 from flask import request
-from user_functions import new_user, get_user_data, set_user, add_new_course, remove_course_data, delete_user_data, course_substring_search, get_user_courses_data
+from user_functions import new_user, get_user_data, set_user, add_new_course, remove_course_data, delete_user_data, course_search, get_user_courses_data
 from apiflask import APIBlueprint
 
 user_api = APIBlueprint("user_api", __name__)
@@ -28,9 +28,10 @@ def get_user_courses(user_id):
 
 @user_api.route("/user/<user_id>/courses/search", methods=["GET"])
 def search_available_courses(user_id):
-    query = request.args.get('query')
-    # Searches and returns courses in a user that include query in course name
-    return course_substring_search(user_id, query)
+    data = request.get_json()
+    # Searches and returns courses in user courses with query
+    # Filters by course subject, course number, and/or course_title
+    return course_search(user_id, data)
 
 @user_api.route("/user/<user_id>", methods=["PATCH"])
 def update_user(user_id):
