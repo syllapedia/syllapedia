@@ -9,10 +9,6 @@ def user_exists(user_id):
     # Checks if user exists
     return users.count_documents({"_id": user_id}) > 0
 
-def course_exists(course_id):
-    # Checks if a course exists
-    return courses.count_documents({"_id": ObjectId(course_id)}) > 0
-
 def sanitize_user(user):
     # Gets all user courses that exist in courses
     try: 
@@ -29,31 +25,54 @@ def sanitize_user(user):
     # Returns user
     return user
 
-def course_substring_search(user_id, query):
+def user_courses_complement(user_courses, valid_courses):
+    user_courses_complement = []
+    # For every valid course
+    for course in valid_courses:
+        # When the course in not in user courses
+        if course["_id"] not in user_courses:
+            # Adds sanitized course to user course complement
+            course['_id'] = str(course['_id'])
+            user_courses_complement.append(course)
+
+    # Returns user complement
+    return user_courses_complement
+    
+def course_search(user_id, query):
     # Checks if user does not exist
-    if not course_exists(user_id):
-        return Response("User could not found", 404)
+    if not user_exists(user_id):
+        return Response("User could not be found", 404)
+    
+    # Gets valid courses
+    try:
+        # Creates a filter query
+        if "course_number" in query:
+            query["course_number"] = {"$regex": query["course_number"], "$options": "i"}
+        if "name" in query:
+            query["name"] = {"$regex": query["name"], "$options": "i"}
+
+        # Gets courses with filter query
+        valid_courses = courses.find(query)
+    except:
+        valid_courses = []
+
+    # Gets user
+    try:
+        user = users.find_one({"_id": user_id})
+    except:
+        return Response("User could not be found", 404)
     
     try:
-        # Gets valid courses
-        filter_query = {"name": {"$regex": query, "$options": "i"}}
-        valid_courses = courses.find(filter_query)
-
         # Gets user courses
-        user = users.find_one({"_id": user_id})
         user_courses = user["courses"]
-        
-        # Gets user courses in valid courses
-        filtered_courses = []
-        for course in valid_courses:
-            if course["_id"] not in user_courses:
-                course['_id'] = str(course['_id'])
-                filtered_courses.append(course)
+
+        # Gets courses in valid courses that are not in user courses
+        complement_courses = user_courses_complement(user_courses, valid_courses)
 
         # Return filtered courses
-        return jsonify(filtered_courses), 200
+        return jsonify(complement_courses), 200
     except:
-        return Response("Course substring search properly did not execute properly", 400)
+        return Response("Course search did not execute properly", 400)
 
 def new_user(user_id, name, email):
     # Checks if user exists
@@ -80,7 +99,7 @@ def new_user(user_id, name, email):
 def get_user_data(user_id):
     # Checks if user does not exist
     if not user_exists(user_id):
-        return Response("User could not found", 404)
+        return Response("User could not be found", 404)
     
     try:
         # Gets user and sanitizes
@@ -95,7 +114,7 @@ def get_user_data(user_id):
 def get_user_courses_data(user_id):
     # Checks if user does not exist
     if not user_exists(user_id):
-        return Response("User could not found", 404)
+        return Response("User could not be found", 404)
        
     try:
         # Gets user and sanitizes courses
@@ -110,7 +129,7 @@ def get_user_courses_data(user_id):
 def set_user(user_id, key, value):
     # Checks if user does not exist
     if not user_exists(user_id):
-        return Response("User could not found", 404)
+        return Response("User could not be found", 404)
     try:
         # Updates value for key
         users.update_one(
@@ -126,7 +145,7 @@ def set_user(user_id, key, value):
 def add_new_course(user_id, course_id):
     # Checks if user does not exist
     if not user_exists(user_id):
-        return Response("User could not found", 404)
+        return Response("User could not be found", 404)
 
     # Gets user courses
     user_courses = users.find_one({"_id": user_id})["courses"]
@@ -145,7 +164,7 @@ def add_new_course(user_id, course_id):
 def remove_course_data(user_id, course_id):
     # Checks if user does not exist
     if not user_exists(user_id):
-        return Response("User could not found", 404)
+        return Response("User could not be found", 404)
 
     # Gets user courses
     user_courses = users.find_one({"_id": user_id})["courses"]
@@ -165,7 +184,7 @@ def remove_course_data(user_id, course_id):
 def delete_user_data(user_id):
     # Checks if user does not exist
     if not user_exists(user_id):
-        return Response("User could not found", 404)
+        return Response("User could not be found", 404)
     
     try:
         # Deletes user

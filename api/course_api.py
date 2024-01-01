@@ -8,7 +8,7 @@ course_api = APIBlueprint("course_api", __name__)
 def create_course():
     data = request.get_json()
     # Creates a course and returns the created course
-    return new_course(data["name"], data["user_id"], data["syllabus"])
+    return new_course(data["subject"], data["course_number"], data["course_title"], data["user_id"], data["syllabus"])
 
 @course_api.route("/course/<course_id>", methods=["GET"])
 def get_course(course_id):
