@@ -102,15 +102,32 @@ def set_course(course_id, key, value):
         return Response("Course could not be found", 404)
     
     try:
-        if key == "_id":
-            return Response("Course id cannot be changed", 400)
-        elif key not in course.keys():
+        # Checks for invalid key
+        if key not in course.keys():
             return Response("Invalid course key", 404)
-        elif key == "syllabus":
+        elif key == "_id":
+            return Response("Course id cannot be changed", 400)
+        elif key == "name":
+            return Response("Name cannot be changed directly", 400)
+        
+        # Converts value of syllabus to syllabus object
+        if key == "syllabus":
             try:
                 value = new_syllabus(value)
             except:
                 return Response("Invalid syllabus", 400)
+        
+        # Updates name if subject, course_number, or course_title will change
+        if key in ["subject", "course_number", "course_title"]:
+            subject = value if key == "subject" else course["subject"]
+            course_number = value if key == "course_number" else course["course_number"]
+            course_title = value if key == "course_title" else course["course_title"]
+            name = subject  + course_number + " - " + course_title
+            courses.update_one({
+                "_id": ObjectId(course_id)},
+                {"$set": {"name": name}
+            })
+
         # Updates value for key
         courses.update_one({
             "_id": ObjectId(course_id)},
