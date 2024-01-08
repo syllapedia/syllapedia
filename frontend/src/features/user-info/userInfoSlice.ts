@@ -4,22 +4,24 @@ import { JWTUserInfo, UserInfo } from "../../models/userModels"
 import { getUser, createUser } from "../../services/httpService"
 
 export interface UserState {
-  user: UserInfo | null
+  user: UserInfo | null,
+  userCredential: string,
   status: "idle" | "loading" | "failed"
 }
 
 const initialState: UserState = {
   user: null,
+  userCredential: "",
   status: "loading",
 }
 
 export const selectUserState = (state: RootState) => state.userState;
 export const loadUser = createAsyncThunk(
   "userInfo/loadUser", 
-  async (info: JWTUserInfo) => {
-    await createUser({ _id: info.sub, name: info.name!, email: info.email! });
+  async ({ info, credential }: { info: JWTUserInfo, credential: string}) => {
+    await createUser({ _id: info.sub, name: info.name!, email: info.email! }, credential);
 
-    return await getUser(info.sub);
+    return await getUser(info.sub, credential);
   }
 );
 
@@ -29,6 +31,9 @@ export const userInfoSlice = createSlice({
   reducers: {
     updateInfo: (state, data: PayloadAction<UserInfo>) => {
       state.user = data.payload;
+    },
+    updateCredential: (state, data: PayloadAction<string>) => {
+      state.userCredential = data.payload;
     }
   },
   extraReducers: (builder) => {
@@ -46,5 +51,5 @@ export const userInfoSlice = createSlice({
   },
 });
 
-export const { updateInfo } = userInfoSlice.actions;
+export const { updateInfo, updateCredential } = userInfoSlice.actions;
 export default userInfoSlice.reducer;
