@@ -121,8 +121,15 @@ def get_user_courses_data(user_id):
         user = users.find_one({"_id": user_id})
         sanitized_courses = sanitize_user(user)["courses"]
 
+        # Converts courses to course objects
+        user_courses = []
+        for course_id in sanitized_courses:
+            course = courses.find_one({"_id": ObjectId(course_id)})
+            course["_id"] = course_id
+            user_courses.append(course)
+
         # Returns sanitized user courses
-        return jsonify(sanitized_courses), 200
+        return jsonify(user_courses), 200
     except:
         return Response("Could not get user courses", 400)
     

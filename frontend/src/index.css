@@ -19,6 +19,11 @@ code {
   --text-color: #e2e8f0;
   --warning-color: #ef4444;
 
-  --navbar-height: 70px;
-  --page-height: calc(100% - var(--navbar-height));
+  --navbar-height: 60px;
+  --tab-height: 60px;
+  --divider-height: 0.8px;
+  --drawer-width-open: 260px;
+  --drawer-width-closed: 60px;
+  --icon-size: 40px;
+  --num-tabs: 3;
 }

@@ -45,7 +45,7 @@ def new_course(subject, course_number, course_title, user_id, syllabus):
         return Response("Could not find instructor", 404)
     
     # Creates course name
-    name = subject + course_number + " - " + course_title
+    name = subject + " " + course_number + " - " + course_title
 
     try:
         # Gets course by name and instructor
@@ -122,7 +122,7 @@ def set_course(course_id, key, value):
             subject = value if key == "subject" else course["subject"]
             course_number = value if key == "course_number" else course["course_number"]
             course_title = value if key == "course_title" else course["course_title"]
-            name = subject  + course_number + " - " + course_title
+            name = subject + " " + course_number + " - " + course_title
             courses.update_one({
                 "_id": ObjectId(course_id)},
                 {"$set": {"name": name}

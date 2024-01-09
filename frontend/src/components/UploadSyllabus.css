@@ -1,0 +1,14 @@
+.upload-button.MuiButtonBase-root {
+    width: 55%;
+}
+
+.file-button.MuiButtonBase-root {
+    width: 45%;
+}
+
+.file-button-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+}

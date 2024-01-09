@@ -1,0 +1,54 @@
+.root {
+    display: flex;
+}
+
+.drawer-open {
+    width: var(--drawer-width-open);
+    transition: width 0.4s ease;
+}
+
+.drawer-closed {
+    width: var(--drawer-width-closed);
+    transition: width 0.4s ease;
+}
+
+.tab {
+    height: var(--tab-height);
+    padding: 0px;
+}
+
+.tab.MuiListItem-root {
+    padding: 0px;
+}
+
+.tab.MuiListItemButton-root {
+    padding: 0px;
+}
+
+.tab.MuiIconButton-root {
+    padding: 0px;
+}
+
+.tab-icon {
+    padding: 18px;
+}
+
+.tab-content {
+    height: calc(100vh - var(--num-tabs) * var(--tab-height) - var(--divider-height));
+    overflow-y: auto;
+}
+
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: #e5e5e5;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #a3a3a3;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
