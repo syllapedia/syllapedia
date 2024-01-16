@@ -1,6 +1,7 @@
 import google.generativeai as genai
 from database import db
 import json
+from authorization import env_keys
 
 courses = db["Courses"]
 
@@ -25,7 +26,7 @@ def gemini_chat_respond(question, txt):
     ]
     try:
         # Gets Gemini response
-        genai.configure(api_key="AIzaSyCbU8m8uacogSPwrcITcZEtw5ILxEA7v6w")
+        genai.configure(api_key=env_keys['GEMINI_KEY'])
         model = genai.GenerativeModel(model_name="gemini-pro")
         content = model.generate_content(prompt_parts)
 
