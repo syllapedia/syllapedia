@@ -1,0 +1,8 @@
+.root {
+    display: flex;
+}
+
+.page {
+    width: 100%;
+    display: block;
+}

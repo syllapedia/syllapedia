@@ -1,5 +1,5 @@
 from flask import Response, jsonify
-from gemini_api import gemini_chat_respond
+from gemini_functions import gemini_chat_respond
 from highlight import update_highlight
 from bson.objectid import ObjectId
 from database import db
