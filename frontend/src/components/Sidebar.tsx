@@ -27,7 +27,7 @@ function Sidebar() {
             if (user.user.permission === "admin" || user.user.permission === "instructor") {
                 rootStyle.setProperty("--num-tabs", "4");
             }
-            getUserCourses(user.user._id)
+            getUserCourses(user.user._id, user.userCredential)
                 .then(fetchedCourses => {
                     setUserCourses(fetchedCourses);
                 })
