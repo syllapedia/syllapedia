@@ -1,19 +1,24 @@
 export interface CourseInfo {
-    _id: string,
+    _id: string;
 
-    name: string,
-    subject: string,
-    course_number: string,
-    course_title: string,
-    instructor: {
-        _id: string,
-        name: string,
-        email: string
-    }
+    name: string;
+    subject: string;
     
-    syllabus: {
-        original: string, 
-        pdf: string, 
-        txt: string
-    }
+    course_number: string;
+    course_title: string;
+    
+    instructor: Instructor;
+    syllabus: Syllabus;
+}
+
+export interface Instructor {
+    _id: string;
+    name: string;
+    email: string;
+}
+
+export interface Syllabus {
+    original: string; 
+    pdf: string;
+    txt: string;
 }

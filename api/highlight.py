@@ -27,10 +27,3 @@ def highlight_text_in_pdf(base64_pdf, texts_to_highlight):
     # Returns pdf converted into a blob
     return base64.b64encode(output_stream.getvalue()).decode('utf-8')
 
-def update_highlight(user_id, base64_pdf, texts_to_highlight):
-    # Creates highlighted pdf blob
-    highlighted_base64 = highlight_text_in_pdf(base64_pdf, texts_to_highlight)
-    
-    # Updates the user's previous highlighted pdf
-    set_user(user_id, "prevHighlight", highlighted_base64)
-
