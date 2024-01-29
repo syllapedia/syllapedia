@@ -1,0 +1,27 @@
+.outer-layout-container {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+.inner-layout-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+}
+
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #2e2e2e;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}

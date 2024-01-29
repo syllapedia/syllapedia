@@ -1,5 +1,9 @@
 .navbar {
-    background-color: var(--secondary-color);
+    background-color: #0a0a0a;
+    
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-color: rgba(255, 255, 255, 0.12);
 
     height: var(--navbar-height);
     padding-left: 30px;

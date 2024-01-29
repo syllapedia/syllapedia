@@ -1,11 +1,15 @@
 import { UserInfo } from "../models/userModels";
+import { QuestionInfo } from "../models/chatbotModels";
 
 const FLASK_URL = 'https://syllapedia.azurewebsites.net';
 // const FLASK_URL = 'http://localhost:5000'
 
 export const getUser = async (id: string, authToken: string) => await get(`/user/${id}`, authToken);
-export const createUser = async (info: UserInfo, authToken: string) => await post('/user', authToken, { "user_id": info._id, "name": info.name, "email": info.email });
 export const getUserCourses = async (id: string, authToken: string) => await get(`/user/${id}/courses`, authToken);
+
+export const createUser = async (info: UserInfo, authToken: string) => await post('/user', authToken, { "user_id": info._id, "name": info.name, "email": info.email });
+
+export const askQuestion = async (info: QuestionInfo, authToken: string) => await post('/chat', authToken, { "user_id": info.userId, "course_id": info.courseId, "question": info.question }); 
 
 async function get(url: string, authToken: string) {
     const requestInfo = { 
