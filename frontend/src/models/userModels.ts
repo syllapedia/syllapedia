@@ -12,5 +12,6 @@ export interface JWTUserInfo {
     sub: string,
     name?: string,
     email?: string,
+    permission?: string,
     hd?: string
 }

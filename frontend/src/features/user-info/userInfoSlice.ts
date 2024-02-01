@@ -19,8 +19,7 @@ export const selectUserState = (state: RootState) => state.userState;
 export const loadUser = createAsyncThunk(
   "userInfo/loadUser", 
   async ({ info, credential }: { info: JWTUserInfo, credential: string}) => {
-    await createUser({ _id: info.sub, name: info.name!, email: info.email!, permission: "" }, credential);
-
+    await createUser({ _id: info.sub, name: info.name!, email: info.email!, permission: info.permission! }, credential);
     return await getUser(info.sub, credential);
   }
 );

@@ -84,8 +84,7 @@ def new_user(user_id, name, email):
             "name": name,
             "email": email,
             "permission": "",
-            "courses": [],
-            "prevHighlight": None
+            "courses": []
         }
         users.insert_one(new_user)
 

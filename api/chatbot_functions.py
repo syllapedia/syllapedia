@@ -1,6 +1,6 @@
 from flask import Response, jsonify
 from gemini_functions import gemini_chat_respond
-from highlight import update_highlight
+from highlight import highlight_text_in_pdf
 from bson.objectid import ObjectId
 from database import db
 
@@ -22,9 +22,9 @@ def chat_respond(user_id, course_id, question):
     return Response("Answer failed to complete", 400)
   try:
     sources = response["sources"]
-    update_highlight(user_id, pdf, sources)
+    highlight = highlight_text_in_pdf(pdf, sources)
   except:
     return Response("Sources failed to complete", 400)
 
   # Returns answer and whether it is valid
-  return jsonify({"answer": answer, "valid": response["valid"]}), 200
+  return jsonify({"answer": answer, "valid": response["valid"], "highlight": highlight}), 200

@@ -1,21 +1,13 @@
 export interface CourseInfo {
-    _id: string,
+    _id: string;
 
     name: string,
     subject: string,
     number: string,
     title: string,
-    instructor: {
-        _id: string,
-        name: string,
-        email: string
-    }
     
-    syllabus: {
-        original: string, 
-        pdf: string, 
-        txt: string
-    }
+    instructor: Instructor;
+    syllabus: Syllabus;
 }
 
 export interface createCourseInfo {
@@ -440,3 +432,15 @@ export enum codeToSubject {
     "YIDDISH" = "Yiddish",
     "ZEROCRED" = "Zero Credit Test Equiv",
 } */
+
+export interface Instructor {
+    _id: string;
+    name: string;
+    email: string;
+}
+
+export interface Syllabus {
+    original: string; 
+    pdf: string;
+    txt: string;
+}

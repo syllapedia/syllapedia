@@ -5,11 +5,13 @@
 .drawer-open {
     width: var(--drawer-width-open);
     transition: width 0.4s ease;
+    overflow: hidden;
 }
 
 .drawer-closed {
     width: var(--drawer-width-closed);
     transition: width 0.4s ease;
+    overflow: hidden;
 }
 
 .tab {
@@ -38,38 +40,4 @@
     flex-direction: column;
     height: calc(100vh - var(--num-tabs) * var(--tab-height) - var(--divider-height));
     overflow-y: auto;
-}
-
-.course.MuiListItemButton-root {
-    width: 100%; 
-    margin-left: 8px; 
-    margin-right: 8px; 
-    border-radius: 10px; 
-    display: flexbox; 
-    white-space: nowrap;
-}
-
-.course-selected.MuiListItemButton-root {
-    width: 100%; 
-    margin-left: 8px; 
-    margin-right: 8px; 
-    border-radius: 10px; 
-    display: flexbox; 
-    white-space: nowrap;
-    background-color: #262626;
-}
-
-::-webkit-scrollbar-track {
-    border-radius: 10px;
-    background-color: #e5e5e5;
-}
-
-::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    background-color: #a3a3a3;
-}
-
-::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
 }

@@ -42,9 +42,10 @@ def openai_chat_respond(question, txt):
     response = json.loads(completion.choices[0].message.content)
     answer = response["answer"]
     sources = response["sources"]
+    valid = len(sources) != 0
     
     # Returns answer, sources, and whether response executed successfully
-    return {"answer": answer, "sources": sources, "valid": True}
+    return {"answer": answer, "sources": sources, "valid": valid}
   except:
     return {"answer": "Response Failed to Complete", "sources": "Response Failed to Complete", "valid": False}
 

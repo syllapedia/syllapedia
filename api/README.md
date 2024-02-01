@@ -1,7 +1,14 @@
-# Running the API
+# Running the API Locally
 
 ```sh
 flask run
+```
+
+# Running the API on Docker
+
+```sh
+docker build --tag syllapedia_api .
+docker run --dns 8.8.8.8 --name syllapedia_api_container -d -p 5000:5000 syllapedia_api
 ```
 
 # Setting up the environment (no venv file present)
