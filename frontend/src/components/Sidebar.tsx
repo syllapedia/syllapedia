@@ -16,24 +16,34 @@ import { Divider, Drawer, List, Collapse } from '@mui/material';
 function Sidebar() {
     const user = useAppSelector(selectUserState);
     const [userCourses, setUserCourses] = useState<CourseInfo[]>([]);
+    const [coursesStatus, setCoursesStatus] = useState<"loading" | "success" | "failed" | "">("")
     const [createDialogOpen, createSetDialog] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(true);
     const [selectedTab, setSelectedTab] = useState("saved");
-    const [selectedCourse, setSelectedCourse] = useState({name:"", instructor:""});
+    const [selectedCourse, setSelectedCourse] = useState<CourseInfo>();
+
+    const updateUserCourses = () => {
+        if (user.user) {
+            setCoursesStatus("loading");
+            getUserCourses(user.user._id, user.userCredential)
+                .then(fetchedCourses => {
+                    setUserCourses(fetchedCourses);
+                    setCoursesStatus("success");
+                })
+                .catch(error => {
+                    console.error('Error fetching courses:', error);
+                    setCoursesStatus("failed");
+                });
+        }
+    };
 
     useEffect(() => {
-        if (user.user && user.user.courses && user.status === 'idle') {
+        if (user.user && user.status === 'idle') {
             const rootStyle = document.documentElement.style;
             if (user.user.permission === "admin" || user.user.permission === "instructor") {
                 rootStyle.setProperty("--num-tabs", "4");
             }
-            getUserCourses(user.user._id)
-                .then(fetchedCourses => {
-                    setUserCourses(fetchedCourses);
-                })
-                .catch(error => {
-                    console.error('Error fetching courses:', error);
-                });
+            updateUserCourses();
         }
     }, [user.user]);
 
@@ -60,7 +70,7 @@ function Sidebar() {
 
     return (
         <div className="root">
-            <CreateDialog open={createDialogOpen} handleDialog={handleCreateDialog} />
+            <CreateDialog open={createDialogOpen} handleDialog={handleCreateDialog} userCourses={userCourses} setUserCourses={setUserCourses}/>
 
             <Drawer
                 className={`drawer-${drawerOpen ? 'open' : 'closed'}`}
@@ -76,21 +86,19 @@ function Sidebar() {
                     <SavedTab open={drawerOpen} handleSavedClick={handleSavedClick}/>
                     {user.user && user.user._id && drawerOpen && 
                         <Collapse in={selectedTab === "saved"} timeout={400}> 
-                            <SavedCourses userId={user.user._id} userCourses={userCourses} selectedCourse={selectedCourse} setSelectedCourse={setSelectedCourse}/>
+                            <SavedCourses coursesStatus={coursesStatus} userCourses={userCourses} setUserCourses={setUserCourses} selectedCourse={selectedCourse} setSelectedCourse={setSelectedCourse}/>
                         </Collapse>
                     }
                     
                     <FindTab open={drawerOpen} handleFindClick={handleFindClick}/>
                     {drawerOpen && 
                         <Collapse in={selectedTab === "find"} timeout={400}>
-                            <CourseSearch />
+                            <CourseSearch userCourses={userCourses} setUserCourses={setUserCourses}/>
                         </Collapse>
                     }
 
                     {user.user && (user.user.permission === "instructor" || user.user.permission === "admin") && 
-                        <>
-                            <CreateTab open={drawerOpen} handleCreateDialog={handleCreateDialog} />
-                        </>
+                        <CreateTab open={drawerOpen} handleCreateDialog={handleCreateDialog} />
                     }
                 </List>
             </Drawer>

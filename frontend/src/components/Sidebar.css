@@ -34,8 +34,29 @@
 }
 
 .tab-content {
+    display: flex;
+    flex-direction: column;
     height: calc(100vh - var(--num-tabs) * var(--tab-height) - var(--divider-height));
     overflow-y: auto;
+}
+
+.course.MuiListItemButton-root {
+    width: 100%; 
+    margin-left: 8px; 
+    margin-right: 8px; 
+    border-radius: 10px; 
+    display: flexbox; 
+    white-space: nowrap;
+}
+
+.course-selected.MuiListItemButton-root {
+    width: 100%; 
+    margin-left: 8px; 
+    margin-right: 8px; 
+    border-radius: 10px; 
+    display: flexbox; 
+    white-space: nowrap;
+    background-color: #262626;
 }
 
 ::-webkit-scrollbar-track {

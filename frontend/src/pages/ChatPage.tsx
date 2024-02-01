@@ -12,7 +12,6 @@ function ChatPage() {
         <div className="root">
             <Sidebar />
             <div className="page">
-                <Navbar />
                 <h1>User: {user.user && user.status === 'idle' ? user.user.name : user.status}</h1>
             </div>
         </div> 

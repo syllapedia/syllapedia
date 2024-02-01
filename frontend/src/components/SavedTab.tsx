@@ -3,7 +3,12 @@ import "./Sidebar.css";
 import { ListItem, ListItemButton, ListItemText } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 
-function SavedTab({open, handleSavedClick}: {open: boolean, handleSavedClick: () => void}) {
+interface savedTabProperties {
+    open: boolean;
+    handleSavedClick: () => void;
+}
+
+function SavedTab({open, handleSavedClick}: savedTabProperties) {
     return (
         <ListItem className="tab">
             <ListItemButton disableRipple className="tab" onClick={() => handleSavedClick()}>

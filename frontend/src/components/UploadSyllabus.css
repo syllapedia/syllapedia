@@ -6,9 +6,10 @@
     width: 45%;
 }
 
-.file-button-text {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 100%;
+.file-text {
+    text-decoration: underline;
+    cursor: pointer;
+    text-align: 'center';
+    line-height: 2;
+    margin-left: 15px;
 }

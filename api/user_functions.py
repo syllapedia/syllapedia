@@ -46,10 +46,8 @@ def course_search(user_id, query):
     # Gets valid courses
     try:
         # Creates a filter query
-        if "course_number" in query:
-            query["course_number"] = {"$regex": query["course_number"], "$options": "i"}
-        if "name" in query:
-            query["name"] = {"$regex": query["name"], "$options": "i"}
+        for key, value in query.items():
+            query[key] = {"$regex": value, "$options": "i"}
 
         # Gets courses with filter query
         valid_courses = courses.find(query)

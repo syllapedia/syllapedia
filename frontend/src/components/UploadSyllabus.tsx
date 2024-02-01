@@ -1,10 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./UploadSyllabus.css"
-import { Button, Typography } from '@mui/material';
+import { Button, Typography, useTheme } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 
-function UploadSyllabus({syllabus, handleSyllabus, size}: {syllabus: string, handleSyllabus: (event: React.ChangeEvent<HTMLInputElement>) => void, size: "small" | "medium"}) {
+interface uploadSyllabusProperties {
+    syllabus: string;
+    handleSyllabus: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    size: "small" | "medium";
+}
+
+function UploadSyllabus({syllabus, handleSyllabus, size}: uploadSyllabusProperties) {
+    const theme = useTheme()
     const [file, setFile] = useState<File | null>(null);
+    useEffect(() => {
+        if (syllabus) {
+            const fetchFile = async () => {
+                const base64Response = await fetch(`data:application/pdf;base64,${syllabus}`);
+                const blob = await base64Response.blob();
+                const newFile = new File([blob], "syllabus.pdf", { type: "application/pdf" });
+                setFile(newFile);
+            };
+            fetchFile();
+        }
+    }, [syllabus]);
     const openFile = () => {
         if (file) {
             const fileURL = URL.createObjectURL(file);
@@ -24,22 +42,19 @@ function UploadSyllabus({syllabus, handleSyllabus, size}: {syllabus: string, han
                 Upload Syllabus
                 <input
                     type="file"
-                    onChange={(event) => {handleSyllabus(event);setFile(event.target.files ? event.target.files[0] : null);}}
+                    onChange={(event) => {handleSyllabus(event);}}
                     hidden
+                    accept="application/pdf"
                 />
             </Button>
             {syllabus && 
-                <Button 
+                <div 
                     onClick={() => openFile()} 
-                    variant="text" 
-                    size={size}
-                    color="primary"
-                    className="file-button"
+                    style={{ color: theme.palette.info.light }}
+                    className="file-text"
                 >
-                    <Typography  align="center" className="file-button-text">
-                        {file ? file.name : ""}
-                    </Typography>
-                </Button>
+                    {file ? file.name : ""}
+                </div>
             }
         </div>
     );

@@ -13,11 +13,11 @@ code {
 }
 
 :root {
-  --primary-color:#0a0a0a;
-  --secondary-color: #171717;
-  --accent-color: #ffffff;
-  --text-color: #e2e8f0;
-  --warning-color: #ef4444;
+  --primary-color: #b91c1c;
+  --secondary-color: #6d28d9;
+  --background-color-paper: #0a0a0a;
+  --background-color-default: #262626;
+  --text-color-primary: #e5e5e5;
 
   --navbar-height: 60px;
   --tab-height: 60px;
