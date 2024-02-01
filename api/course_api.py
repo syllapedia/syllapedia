@@ -10,7 +10,7 @@ def create_course():
     def action():
         data = request.get_json()
         # Creates a course and returns the created course
-        return new_course(data["subject"], data["course_number"], data["course_title"], data["user_id"], data["syllabus"])
+        return new_course(data["user_id"], data["subject"], data["number"], data["title"], data["syllabus"])
     
     return authorize(action)
 
@@ -27,7 +27,7 @@ def update_course(course_id):
     def action():
         data = request.get_json()
         # Updates a value in a course
-        return set_course(course_id, data["key"], data["value"])
+        return set_course(course_id, data)
     
     return authorize(action)
 

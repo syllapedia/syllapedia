@@ -1,8 +1,8 @@
 .search-components {
     padding: 5px;
 }
+
 .search-button.MuiIconButton-root {
     margin-left: 8px; 
-    background-color: #b91c1c; 
     border-radius: 5px;
 }

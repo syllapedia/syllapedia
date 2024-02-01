@@ -6,8 +6,8 @@
 
     height: 100%;
 
-    background-color: var(--primary-color);
-    color: var(--text-color);
+    background-color: var(--background-color-paper);
+    color: var(--text-color-primary);
 
     font-size: x-large;
 }
@@ -19,7 +19,7 @@
 .login-error-message {
     font-size: medium;
     font-style: italic;
-    color: var(--warning-color);
+    color: var(--primary-color);
 
     height: 10px;
 }

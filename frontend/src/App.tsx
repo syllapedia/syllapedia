@@ -4,7 +4,7 @@ import { RouterProvider } from 'react-router-dom';
 import Router from './Router';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-const dark = createTheme ({
+const theme = createTheme ({
   palette: {
     mode: 'dark',
     primary: {
@@ -37,7 +37,7 @@ const dark = createTheme ({
 function App() {
 
   return (
-    <ThemeProvider theme={dark}>
+    <ThemeProvider theme={theme}>
       <RouterProvider router={Router} />
     </ThemeProvider>
   );

@@ -1,9 +1,7 @@
 .course-name-view {
     padding:8px;
-    font-size: 1.5em;
     max-height: 120px;
     text-align: center;
     overflow-x: hidden;
     overflow-y: auto;
-    line-height: 40px;
 }

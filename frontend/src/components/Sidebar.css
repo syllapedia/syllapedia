@@ -36,6 +36,8 @@
 }
 
 .tab-content {
+    display: flex;
+    flex-direction: column;
     height: calc(100vh - var(--num-tabs) * var(--tab-height) - var(--divider-height));
     overflow-y: auto;
 }
