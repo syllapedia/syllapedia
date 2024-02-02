@@ -24,6 +24,8 @@ code {
   --divider-height: 0.8px;
   --drawer-width-open: 260px;
   --drawer-width-closed: 60px;
+  --profile-width: 230px;
+
   --icon-size: 40px;
   --num-tabs: 3;
 }

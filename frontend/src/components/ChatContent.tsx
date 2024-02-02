@@ -20,7 +20,7 @@ function ChatContent() {
     const [currentRole, setCurrentRole] = useState(ChatRole.INTRO);
 
     const openHighlight = () => {
-        if (chatbot.highlight !== "") {
+        if (chatbot.highlight) {
             fetch(`data:application/pdf;base64,${chatbot.highlight}`)
                 .then(res => res.blob())
                 .then(blob => {

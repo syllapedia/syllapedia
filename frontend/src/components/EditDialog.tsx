@@ -5,12 +5,11 @@ import { CourseInfo, setCourseInfo } from "../models/courseModels";
 import { setCourse } from "../services/httpService";
 import { subjectToCode, codeToSubject } from "../models/courseModels";
 import "./EditDialog.css";
-import { Dialog, DialogContent, DialogTitle, Grid, Button, Divider, LinearProgress } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, Grid, Button, Divider, LinearProgress, Typography } from '@mui/material';
 import CourseNameView from "./CourseNameView";
 import SubjectDropdown from "./SubjectDropdown";
 import CourseInput from "./CourseInput";
 import UploadSyllabus from "./UploadSyllabus";
-import ErrorText from "./ErrorText";
 
 interface dialogProperties {
     currentCourse: CourseInfo;
@@ -124,7 +123,9 @@ function EditDialog({ currentCourse, setCurrentCourse, open, handleDialog, userC
                         <UploadSyllabus syllabus={syllabus} handleSyllabus={handleSyllabus} size="medium"/>
                     </Grid>
                     <Grid item xs={12}>
-                        <ErrorText error={error}/>
+                        <Typography className="error-text" color={"error"}>
+                            {error}
+                        </Typography>
                     </Grid>
                     <Grid item xs={6}></Grid>
                     <Grid item xs={3}>

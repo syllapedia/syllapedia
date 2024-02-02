@@ -38,7 +38,7 @@ function LoginPage() {
 
     return (
         <div className="login-page">
-            { !user.user ? "Login with your school email to continue...\n" : <Navigate to="/home" />}
+            { !user.user ? "Login with your school email to continue...\n" : <Navigate to="/" />}
             <div className="login-error-message">
                 { user.status === 'failed' ? "Connection Error" : errorMessage }
             </div>
