@@ -30,6 +30,11 @@ const theme = createTheme ({
       main: '#1d4ed8',
       light: '#3b82f6',
       dark: '#1e3a8a',
+    },
+    error: {
+      main: '#b91c1c',
+      light: '#f87171',
+      dark: '#7f1d1d',
     }
   },
 });

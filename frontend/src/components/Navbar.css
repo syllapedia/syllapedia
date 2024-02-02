@@ -1,4 +1,21 @@
-.navbar {
+.navbar-left {
+    background-color: #0a0a0a;
+    
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-color: rgba(255, 255, 255, 0.12);
+
+    height: var(--navbar-height);
+    padding: 0px 20px 0px 20px;
+    display: flex;
+    align-items: center;
+
+    line-height: var(--navbar-height);
+    color: var(--text-color);
+    font-size: x-large;
+}
+
+.navbar-right {
     background-color: #0a0a0a;
     
     border-bottom-style: solid;
@@ -7,6 +24,10 @@
 
     height: var(--navbar-height);
     padding-left: 30px;
+    padding-right: 30px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 
     line-height: var(--navbar-height);
     color: var(--text-color);

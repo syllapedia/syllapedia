@@ -9,7 +9,6 @@ import CourseNameView from "./CourseNameView";
 import SubjectDropdown from "./SubjectDropdown";
 import CourseInput from "./CourseInput";
 import UploadSyllabus from "./UploadSyllabus";
-import ErrorText from "./ErrorText";
 
 interface dialogProperties {
     open: boolean;
@@ -112,7 +111,7 @@ function CreateDialog({ open, handleDialog, userCourses, setUserCourses }: dialo
                         <UploadSyllabus syllabus={syllabus} handleSyllabus={handleSyllabus} size="medium"/>
                     </Grid>
                     <Grid item xs={12}>
-                        <Typography className="error-text" color={"primary"}>
+                        <Typography className="error-text" color={"error"}>
                             {error}
                         </Typography>
                     </Grid>

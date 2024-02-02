@@ -9,11 +9,11 @@ import "./SavedCourses.css";
 import { Typography, List, ListItem, ListItemButton, ListItemText, IconButton, CircularProgress, Menu, MenuItem } from '@mui/material';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import SearchIcon from '@mui/icons-material/Search';
 import Create from '@mui/icons-material/Create'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditDialog from "./EditDialog";
 import DeleteDialog from "./DeleteDialog";
+import SearchIcon from '@mui/icons-material/Search';
 
 interface savedCoursedProperties {
     coursesStatus: "loading" | "failed" | "success" | "";
@@ -144,7 +144,7 @@ function SavedCourses({coursesStatus, userCourses, setUserCourses, selectedCours
                                                 </MenuItem>
                                                 <MenuItem onClick={() => { del(course); handleMenuClose(); }}>
                                                     <DeleteOutlineIcon color="primary"></DeleteOutlineIcon>
-                                                    <Typography color="primary" paddingLeft={"10px"}>
+                                                    <Typography color="error" paddingLeft={"10px"}>
                                                         Delete
                                                     </Typography>
                                                 </MenuItem>
@@ -155,19 +155,16 @@ function SavedCourses({coursesStatus, userCourses, setUserCourses, selectedCours
                             </ListItem>
                     ))
             : 
-            <div style={{textAlign: "center", padding: "16px"}}>
+            <div className="message">
                 <SearchIcon 
                     fontSize="medium" 
-                    className="circle-icon" 
+                    className="search-icon" 
                     style={{
                         color: theme.palette.text.secondary, 
-                        borderRadius: "100%", 
-                        border: "2px solid",
-                        padding: "8px",
                         borderColor: theme.palette.text.secondary
                     }}>
                 </SearchIcon>
-                <Typography color={theme.palette.text.secondary} variant="h5" style={{fontWeight: "bolder"}}>
+                <Typography color={theme.palette.text.secondary} variant="h5" className="bold-text">
                     Find Courses
                 </Typography>
                 <Typography color={theme.palette.text.secondary} variant="body2">
