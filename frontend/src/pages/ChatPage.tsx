@@ -1,4 +1,3 @@
-import React from "react";
 import "./ChatPage.css";
 import ChatInput from "../components/ChatInput";
 import ChatContent from "../components/ChatContent";

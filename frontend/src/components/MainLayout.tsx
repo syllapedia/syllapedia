@@ -1,4 +1,3 @@
-import React from 'react';
 import './MainLayout.css';
 import Navbar from './Navbar';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
@@ -15,7 +14,7 @@ function MainLayout() {
                 <div className="outer-layout-container">
                     <Sidebar />
                     <div className="inner-layout-container">
-                        <Navbar />
+                        <Navbar title={"COMPSCI 240 - Reasoning Under Uncertainty"}/>
                         <Outlet />
                     </div>
                 </div>

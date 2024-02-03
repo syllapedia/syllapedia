@@ -54,7 +54,7 @@ function CourseSearch({userCourses, setUserCourses}: courseSearchInput) {
                     setCoursesStatus("success");
                 })
                 .catch(error => {
-                    console.error('Error fetching courses:', error);
+                    console.error("Error fetching courses:", error);
                     setCoursesStatus("failed");
                 });
         }
@@ -75,13 +75,13 @@ function CourseSearch({userCourses, setUserCourses}: courseSearchInput) {
                 </Grid>
                 <Grid item xs style={{display:"flex"}}>
                     <CourseInput handleInput={coursePropertiesHandler("title")} size="small" label="Name"/>
-                    <IconButton size="medium" onClick={search} className="search-button" style={{ backgroundColor: theme.palette.primary.main }}>
+                    <IconButton size="medium" onClick={search} className="search-button" style={{ color: "#e5e5e5", backgroundColor: theme.palette.primary.main }}>
                         <SearchIcon />
                     </IconButton>            
                 </Grid>
             </Grid>
             {coursesStatus === "loading" ? 
-                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height:"100%"}}>
+                <div style={{display: "flex", justifyContent: "center", alignItems: "center", height:"100%"}}>
                     <CircularProgress color="primary" />
                 </div> :
                     coursesStatus === "success" ? foundCourses.length ?

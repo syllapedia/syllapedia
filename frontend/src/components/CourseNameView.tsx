@@ -1,6 +1,4 @@
 import "./CourseNameView.css";
-import React, { useState } from "react";
-import { subjectToCode } from "../models/courseModels";
 import { Typography} from '@mui/material';
 
 function CourseNameView({courseProperties}: {courseProperties: {subject: string, number: string, title: string}}) {

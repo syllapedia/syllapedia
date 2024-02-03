@@ -70,7 +70,7 @@ function SavedCourses({coursesStatus, userCourses, setUserCourses, selectedCours
     return (
         <List disablePadding className="tab-content">
             {coursesStatus != "success" ?  
-                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height:"100%"}}>
+                <div style={{display: "flex", justifyContent: "center", alignItems: "center", height:"100%"}}>
                     <CircularProgress color="primary" />
                 </div> : 
                 (userCourses.length ? 

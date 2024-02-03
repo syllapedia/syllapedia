@@ -1,7 +1,7 @@
 .profile {
     display: flex;
     cursor: pointer;
-    width:var(--profile-width);
+    width: var(--profile-width);
 }
 
 .avatar {
@@ -10,8 +10,14 @@
     font-size: 18px;
 }
 
+.profile-text {
+    max-width: 172px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .menu-item {
-    width:var(--profile-width);
+    width: var(--profile-width);
 }
 
 .menu-text {

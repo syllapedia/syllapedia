@@ -32,7 +32,7 @@ def user_courses_complement(user_courses, valid_courses):
         # When the course in not in user courses
         if course["_id"] not in user_courses:
             # Adds sanitized course to user course complement
-            course['_id'] = str(course['_id'])
+            course["_id"] = str(course["_id"])
             user_courses_complement.append(course)
 
     # Returns user complement

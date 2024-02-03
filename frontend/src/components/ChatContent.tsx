@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import './ChatContent.css';
 import Typewriter from 'typewriter-effect';
 import { useAppSelector } from "../app/hooks";
 import { selectChatbotState } from "../features/chatbot/chatbotSlice";
 import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
+import { useTheme } from "@mui/material";
 
 enum ChatRole {
     INTRO = 0,
@@ -16,6 +17,7 @@ interface AnimatedTextProps {
 }
 
 function ChatContent() {
+    const theme = useTheme()
     const chatbot = useAppSelector(selectChatbotState);  
     const [currentRole, setCurrentRole] = useState(ChatRole.INTRO);
 
@@ -63,7 +65,8 @@ function ChatContent() {
                             verticalAlign: 'bottom', 
                             marginLeft: 5, 
                             fontSize: 'medium', 
-                            backgroundColor: "#b91c1c", 
+                            color: "#e5e5e5",
+                            backgroundColor: theme.palette.primary.main, 
                             borderRadius: 5, 
                             padding: '2px 3px 2px 2px',
                             cursor: 'pointer' 
@@ -93,7 +96,7 @@ function ChatContent() {
 
     return (
         <div className="chat-content">
-            <div className="bot-bubble">
+            <div className="bot-bubble" style={{backgroundColor: theme.palette.background.default}}>
                 <AnimatedText 
                     role={ChatRole.INTRO} 
                     text={"Hi! I can answer any question about the syllabus. What do you want to know?"}
@@ -101,7 +104,7 @@ function ChatContent() {
             </div>
             {
                 chatbot.question !== "" ? 
-                    <div className="user-bubble">
+                    <div className="user-bubble" style={{backgroundColor: theme.palette.primary.main}}>
                         {chatbot.question} 
                     </div> 
                 : 
@@ -109,14 +112,14 @@ function ChatContent() {
             }
             {
                 chatbot.answer !== "" ?
-                    <div className="bot-bubble">
+                    <div className="bot-bubble" style={{backgroundColor: theme.palette.background.default}}>
                         <AnimatedText 
                             role={ChatRole.ANSWER} 
                             text={chatbot.answer} 
                         />
                     </div> 
                 : chatbot.answer === "" && chatbot.status === "loading" ? 
-                    <div className="bot-bubble">
+                    <div className="bot-bubble" style={{backgroundColor: theme.palette.background.default}}>
                         <ChatbotPending /> 
                     </div> 
                 : 

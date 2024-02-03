@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./LoginPage.css";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { loadUser, selectUserState, updateCredential } from "../features/user-info/userInfoSlice";
@@ -38,12 +38,20 @@ function LoginPage() {
 
     return (
         <div className="login-page">
-            { !user.user ? "Login with your school email to continue...\n" : <Navigate to="/" />}
-            <div className="login-error-message">
-                { user.status === 'failed' ? "Connection Error" : errorMessage }
+            <div className="login-info">
+                <div className="logo">
+                    Syllapedia
+                </div>
+                The syllabus scanning and course answering chatbot made for students and instructors
             </div>
-            <div className="login-button-container">
-                <GoogleLogin onSuccess={handleSuccess} onError={handleError} width={200}/>
+            <div className="login-container">
+                { !user.user ? "Log in to your school email..." : <Navigate to="/" />}
+                <div className="login-error-message">
+                    { user.status === 'failed' ? "Connection Error" : errorMessage }
+                </div>
+                <div className="login-button-container">
+                    <GoogleLogin onSuccess={handleSuccess} onError={handleError} width={200}/>
+                </div>
             </div>
         </div>
     );
