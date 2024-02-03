@@ -191,6 +191,22 @@ def delete_user_data(user_id):
         return Response("User could not be found", 404)
     
     try:
+        # Gets user courses
+        user = users.find_one({"_id": user_id})
+        sanitized_courses = sanitize_user(user)["courses"]
+
+        # Converts courses to course objects
+        user_courses = []
+        for course_id in sanitized_courses:
+            course = courses.find_one({"_id": ObjectId(course_id)})
+            course["_id"] = course_id
+            user_courses.append(course)
+
+        # Delete user's created courses
+        for course in user_courses:
+            if course["instructor"]["_id"] == user_id:
+                courses.delete_one({"_id": ObjectId(course["_id"])})
+
         # Deletes user
         users.delete_one({"_id": user_id})
         return Response(status=200)
