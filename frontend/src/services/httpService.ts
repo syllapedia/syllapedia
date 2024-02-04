@@ -1,6 +1,6 @@
 import { UserInfo } from "../models/userModels";
 import { QuestionInfo } from "../models/chatbotModels";
-import { createCourseInfo, setCourseInfo, courseQuery, CourseInfo } from "../models/courseModels";
+import { createCourseInfo, setCourseInfo, courseQuery } from "../models/courseModels";
 
 const FLASK_URL = 'https://syllapedia.azurewebsites.net';
 // const FLASK_URL = 'http://localhost:5000'

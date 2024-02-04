@@ -6,6 +6,7 @@ import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { JWTUserInfo } from "../models/userModels";
 import { Navigate } from "react-router-dom";
+import { loadCourses } from "../features/course/courseSlice";
 
 function LoginPage() {
     const dispatch = useAppDispatch();
