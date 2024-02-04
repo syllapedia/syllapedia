@@ -5,34 +5,21 @@ import { CourseInfo } from "../models/courseModels";
 import { deleteCourse } from "../services/httpService";
 import "./EditDialog.css";
 import { Dialog, DialogContent, DialogTitle, Grid, Button, Divider, LinearProgress } from '@mui/material';
-
 interface dialogProperties {
-    currentCourse: CourseInfo;
     open: boolean;
-    handleDialog: (open: boolean) => void;
+    course: CourseInfo;
+    handleClose: () => void;
     remove: (courseId: string) => void;
 }
 
-function DeleteDialog({ currentCourse, open, handleDialog, remove }: dialogProperties) {
-    const user = useAppSelector(selectUserState);
+function DeleteDialog({ open, course, handleClose, remove }: dialogProperties) {
+    const userState = useAppSelector(selectUserState);
     const [isDeleting, setIsDeleting] = useState(false);
 
     const escape = () => {
         if (!isDeleting) {
-            handleDialog(false);
+            handleClose();
         }
-    };
-
-    const del = (courseId: string) => {
-        setIsDeleting(true);
-        deleteCourse(courseId, user.userCredential)
-        .then(() => {
-            remove(currentCourse._id);
-        })
-        .finally(() => {
-            setIsDeleting(false);
-            handleDialog(false);
-        });
     };
 
     return (
@@ -56,8 +43,16 @@ function DeleteDialog({ currentCourse, open, handleDialog, remove }: dialogPrope
                     <Grid item xs={3}>
                         <Button size="medium" variant="contained" color="primary"
                             onClick={() => {
-                                del(currentCourse._id);
-                            } }
+                                setIsDeleting(true);
+                                deleteCourse(course._id, userState.userCredential)
+                                .then(() => {
+                                    remove(course._id);
+                                })
+                                .finally(() => {
+                                    setIsDeleting(false);
+                                    handleClose();
+                                });
+                            }}
                             style={{ width: "100%" }}>
                             Delete
                         </Button>

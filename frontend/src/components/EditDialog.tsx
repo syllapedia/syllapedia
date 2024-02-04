@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useAppSelector } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { selectUserState } from "../features/user-info/userInfoSlice";
 import { CourseInfo, setCourseInfo } from "../models/courseModels";
 import { setCourse } from "../services/httpService";
@@ -11,21 +11,23 @@ import SubjectDropdown from "./SubjectDropdown";
 import CourseInput from "./CourseInput";
 import UploadSyllabus from "./UploadSyllabus";
 import ErrorText from "./ErrorText";
+import { selectCourseState, updateCourseList } from "../features/course/courseSlice";
 
 interface dialogProperties {
-    currentCourse: CourseInfo;
-    setCurrentCourse: React.Dispatch<React.SetStateAction<CourseInfo | undefined>>;
     open: boolean;
-    handleDialog: (open: boolean) => void;
-    userCourses: CourseInfo[];
-    setUserCourses: React.Dispatch<React.SetStateAction<CourseInfo[]>>;
+    course: CourseInfo;
+    handleClose: () => void;
 }
 
-function EditDialog({ currentCourse, setCurrentCourse, open, handleDialog, userCourses, setUserCourses }: dialogProperties) {
-    const user = useAppSelector(selectUserState);
+function EditDialog({ open, course, handleClose }: dialogProperties) {
+    const dispatch = useAppDispatch();
+
+    const userState = useAppSelector(selectUserState);
+    const courseState = useAppSelector(selectCourseState);
+
     const [isEditing, setIsEditing] = useState(false);
-    const [courseProperties, setCourseProperties] = useState({subject:currentCourse.subject, number:currentCourse.number, title:currentCourse.title});
-    const [syllabus, setSyllabus] = useState(currentCourse.syllabus.pdf);
+    const [courseProperties, setCourseProperties] = useState({subject:course.subject, number:course.number, title:course.title});
+    const [syllabus, setSyllabus] = useState(course.syllabus.pdf);
     const [error, setError] = useState("");
 
     const coursePropertiesHandler = (key: "subject" | "number" | "title") => {
@@ -37,7 +39,7 @@ function EditDialog({ currentCourse, setCurrentCourse, open, handleDialog, userC
             }
         };
     };
-    const resetCourseProperties = () => {setCourseProperties({subject:currentCourse.subject, number:currentCourse.number, title:currentCourse.title});}
+    const resetCourseProperties = () => setCourseProperties({subject:course.subject, number:course.number, title:course.title});
 	const handleSyllabus = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files !== null) {
             const file = event.target.files[0];
@@ -53,14 +55,13 @@ function EditDialog({ currentCourse, setCurrentCourse, open, handleDialog, userC
     };
     const escape = () => {
         if (!isEditing) {
-            handleDialog(false);
-            setCurrentCourse(undefined);
+            handleClose();
             resetCourseProperties();
             setSyllabus("");
             setError("");
         }
     };
-    const edit = () => {
+    const editCourse = () => {
         if (courseProperties.subject === "") {
             setError("Please select the course subject");
         } else if (courseProperties.number === "") {
@@ -71,28 +72,28 @@ function EditDialog({ currentCourse, setCurrentCourse, open, handleDialog, userC
             setError("Please upload the course syllabus");
         } else {
             let changes: setCourseInfo = {};
-            if (courseProperties.subject !== currentCourse.subject) {
+            if (courseProperties.subject !== course.subject) {
                 changes.subject = courseProperties.subject;
             }
-            if (courseProperties.number !== currentCourse.number) {
+            if (courseProperties.number !== course.number) {
                 changes.number = courseProperties.number;
             }
-            if (courseProperties.title !== currentCourse.title) {
+            if (courseProperties.title !== course.title) {
                 changes.title = courseProperties.title;
             }
-            if (syllabus !== currentCourse.syllabus.pdf) {
+            if (syllabus !== course.syllabus.pdf) {
                 changes.syllabus = syllabus;
             }
             if (Object.keys(changes).length === 0) {
                 setError("Please make a change to edit the course");
-            } else if (user.user) {
+            } else if (userState.user) {
                 setIsEditing(true);
-                setCourse(currentCourse._id, changes, user.userCredential)
+                setCourse(course._id, changes, userState.userCredential)
                     .then(response => {
                         if (typeof response === "string") {
                             setError(response);
                         } else {
-                            setUserCourses(userCourses.map((course: CourseInfo) => response._id === course._id ? response : course));
+                            dispatch(updateCourseList(courseState.courseList.map((course: CourseInfo) => response._id === course._id ? response : course)));
                             escape();
                         }
                         setIsEditing(false);
@@ -133,7 +134,7 @@ function EditDialog({ currentCourse, setCurrentCourse, open, handleDialog, userC
                         </Button>
                     </Grid>
                     <Grid item xs={3}>
-                        <Button size="medium" variant="contained" color="primary" onClick={edit} style={{width: "100%"}}>
+                        <Button size="medium" variant="contained" color="primary" onClick={editCourse} style={{width: "100%"}}>
                             Save
                         </Button>
                     </Grid>

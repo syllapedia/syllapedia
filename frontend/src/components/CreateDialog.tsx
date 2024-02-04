@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useAppSelector } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { selectUserState } from "../features/user-info/userInfoSlice";
 import { createCourse } from "../services/httpService";
 import { CourseInfo, subjectToCode } from "../models/courseModels";
@@ -9,17 +9,19 @@ import CourseNameView from "./CourseNameView";
 import SubjectDropdown from "./SubjectDropdown";
 import CourseInput from "./CourseInput";
 import UploadSyllabus from "./UploadSyllabus";
-import ErrorText from "./ErrorText";
+import { selectCourseState, updateCourseList } from "../features/course/courseSlice";
 
 interface dialogProperties {
     open: boolean;
     handleDialog: (open: boolean) => void;
-    userCourses: CourseInfo[];
-    setUserCourses: React.Dispatch<React.SetStateAction<CourseInfo[]>>;
 }
 
-function CreateDialog({ open, handleDialog, userCourses, setUserCourses }: dialogProperties) {
+function CreateDialog({ open, handleDialog }: dialogProperties) {
+    const dispatch = useAppDispatch();
+
     const user = useAppSelector(selectUserState);
+    const course = useAppSelector(selectCourseState);
+
     const [isCreating, setIsCreating] = useState(false);
     const [courseProperties, setCourseProperties] = useState({subject:"", number:"", title:""});
     const [syllabus, setSyllabus] = useState("");
@@ -82,7 +84,7 @@ function CreateDialog({ open, handleDialog, userCourses, setUserCourses }: dialo
                 if (typeof response === "string")   {
                     setError(response);
                 } else {
-                    setUserCourses(userCourses.concat(response));
+                    dispatch(updateCourseList(course.courseList.concat(response)));
                     escape();
                 }
                 setIsCreating(false);

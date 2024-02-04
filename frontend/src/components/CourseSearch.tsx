@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAppSelector } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { selectUserState } from "../features/user-info/userInfoSlice";
 import { addUserCourse, userSearchCourses } from "../services/httpService";
 import { useTheme } from '@mui/material/styles';
@@ -12,15 +12,16 @@ import SearchIcon from '@mui/icons-material/Search';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import { CourseInfo, subjectToCode } from "../models/courseModels";
 import { courseQuery } from "../models/courseModels";
+import { selectCourseState, updateCourseList } from "../features/course/courseSlice";
 
-interface courseSearchInput {
-    userCourses: CourseInfo[];
-    setUserCourses: React.Dispatch<React.SetStateAction<CourseInfo[]>>;
-}
-
-function CourseSearch({userCourses, setUserCourses}: courseSearchInput) {    
+function CourseSearch() {    
     const theme = useTheme()
-    const user = useAppSelector(selectUserState);
+    
+    const dispatch = useAppDispatch();
+    
+    const userState = useAppSelector(selectUserState);
+    const courseState = useAppSelector(selectCourseState);
+
     const [courseProperties, setCourseProperties] = useState<courseQuery>({subject:"", number:"", title:""});
     const [foundCourses, setFoundCourses] = useState<CourseInfo[]>([]);
     const [coursesStatus, setCoursesStatus] = useState<"loading" | "success" | "failed" | "">("")
@@ -36,7 +37,7 @@ function CourseSearch({userCourses, setUserCourses}: courseSearchInput) {
             setCoursesStatus("");
             setError("Please refine your search")
         }
-        else if (user && user.user) {
+        else if (userState && userState.user) {
             setCoursesStatus("loading");
             let query: courseQuery = {};
             Object.entries(courseProperties).forEach(([key, value]) => {
@@ -48,7 +49,7 @@ function CourseSearch({userCourses, setUserCourses}: courseSearchInput) {
                     }
                 }
             });
-            userSearchCourses(user.user._id, query, user.userCredential)
+            userSearchCourses(userState.user._id, query, userState.userCredential)
                 .then(fetchedCourses => {
                     setFoundCourses(fetchedCourses);
                     setCoursesStatus("success");
@@ -60,8 +61,8 @@ function CourseSearch({userCourses, setUserCourses}: courseSearchInput) {
         }
     };
     const save = (courseId: string) => {
-        if (user.user) {
-            addUserCourse(user.user._id, {course_id: courseId}, user.userCredential);
+        if (userState.user) {
+            addUserCourse(userState.user._id, {course_id: courseId}, userState.userCredential);
         }
     };
     return (
@@ -114,7 +115,7 @@ function CourseSearch({userCourses, setUserCourses}: courseSearchInput) {
                                     />
                                     <IconButton disableTouchRipple onClick={() => {
                                             setFoundCourses(foundCourses.filter(foundCourse => foundCourse._id !== course._id));
-                                            setUserCourses(userCourses.concat(course));
+                                            dispatch(updateCourseList(courseState.courseList.concat(course)));
                                             save(course._id);
                                         }
                                     }>
