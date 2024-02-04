@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { ColorModeContext } from '../App';
 import "./SettingsPage.css";
 import {  useAppSelector } from "../app/hooks";
@@ -20,6 +20,7 @@ function SettingsPage() {
     const { toggleColorMode } = useContext(ColorModeContext);
     const [deleteDialogOpen, setDeleteDialog] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+
     const del = (userId: string) => {
         setIsDeleting(true);
         deleteUser(userId, user.userCredential)
@@ -33,7 +34,7 @@ function SettingsPage() {
 
     return (
         <div className="settings-page">
-            <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialog(false)}>
+            <Dialog open={deleteDialogOpen} onClose={() => !isDeleting && setDeleteDialog(false)}>
                 <DialogTitle>Delete Account</DialogTitle>
                     {isDeleting ? <LinearProgress style={{marginTop: "-3px"}}/> : <Divider></Divider>}
                 <DialogContent style={{width:"380px"}}>
@@ -46,13 +47,14 @@ function SettingsPage() {
                         </Grid><Grid item xs={6}>
                         </Grid>
                         <Grid item xs={3}>
-                            <Button onClick={() => setDeleteDialog(false)} size="medium" variant="outlined" color="inherit">
+                            <Button onClick={() => !isDeleting && setDeleteDialog(false)} size="medium" variant="outlined" color="inherit" disabled={isDeleting}>
                                 Cancel
                             </Button>
                         </Grid>
                         <Grid item xs={3}>
                             <Button size="medium" variant="contained" color="primary"
                                 onClick={() => user.user && del(user.user._id)}
+                                disabled={isDeleting}
                                 style={{ width: "100%" }}>
                                 Delete
                             </Button>

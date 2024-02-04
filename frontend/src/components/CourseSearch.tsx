@@ -19,12 +19,19 @@ interface courseSearchInput {
 }
 
 function CourseSearch({userCourses, setUserCourses}: courseSearchInput) {    
-    const theme = useTheme()
+    const theme = useTheme();
     const user = useAppSelector(selectUserState);
     const [courseProperties, setCourseProperties] = useState<courseQuery>({subject:"", number:"", title:""});
     const [foundCourses, setFoundCourses] = useState<CourseInfo[]>([]);
     const [coursesStatus, setCoursesStatus] = useState<"loading" | "success" | "failed" | "">("")
     const [error, setError] = useState("");
+
+    const handleKeyPress = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            search();
+        }
+    };
 
     const coursePropertiesHandler = (key: "subject" | "number" | "title") => {
         return (value: string | null) => {
@@ -65,7 +72,7 @@ function CourseSearch({userCourses, setUserCourses}: courseSearchInput) {
         }
     };
     return (
-        <div className="tab-content">
+        <div className="tab-content" onKeyDown={handleKeyPress}>
             <Grid container spacing={1} className="search-components">
                 <Grid item xs={7}>
                     <SubjectDropdown handleSubject={coursePropertiesHandler("subject")} size="small"/>
@@ -75,7 +82,7 @@ function CourseSearch({userCourses, setUserCourses}: courseSearchInput) {
                 </Grid>
                 <Grid item xs style={{display:"flex"}}>
                     <CourseInput handleInput={coursePropertiesHandler("title")} size="small" label="Name"/>
-                    <IconButton size="medium" onClick={search} className="search-button" style={{ color: "#e5e5e5", backgroundColor: theme.palette.primary.main }}>
+                    <IconButton size="medium" onClick={search} disabled={coursesStatus === "loading"} className="search-button" style={{ color: "#e5e5e5", backgroundColor: coursesStatus === "loading" ? theme.palette.primary.dark : theme.palette.primary.main }}>
                         <SearchIcon />
                     </IconButton>            
                 </Grid>

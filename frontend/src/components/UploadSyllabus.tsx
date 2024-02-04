@@ -7,9 +7,10 @@ interface uploadSyllabusProperties {
     syllabus: string;
     handleSyllabus: (event: React.ChangeEvent<HTMLInputElement>) => void;
     size: "small" | "medium";
+    disabled?: boolean;
 }
 
-function UploadSyllabus({syllabus, handleSyllabus, size}: uploadSyllabusProperties) {
+function UploadSyllabus({syllabus, handleSyllabus, size, disabled=false}: uploadSyllabusProperties) {
     const theme = useTheme()
     const [file, setFile] = useState<File | null>(null);
     useEffect(() => {
@@ -36,6 +37,7 @@ function UploadSyllabus({syllabus, handleSyllabus, size}: uploadSyllabusProperti
                 size={size}
                 component="label"
                 color="primary"
+                disabled={disabled}
                 startIcon={<UploadIcon />}
                 className="upload-button"
             >
