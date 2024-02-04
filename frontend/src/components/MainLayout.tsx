@@ -1,4 +1,3 @@
-import React from 'react';
 import './MainLayout.css';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAppSelector } from '../app/hooks';
@@ -11,11 +10,11 @@ function MainLayout() {
     const location = useLocation();
 
     const PageLayout = () => (
-        location.pathname !== "/login" ?
+        ["/login", "/settings"].reduce((acc, e) => acc && (location.pathname != e), true)  ?
                 <div className="outer-layout-container">
                     <Sidebar />
                     <div className="inner-layout-container">
-                        <Navbar />
+                        <Navbar title={"COMPSCI 240 - Reasoning Under Uncertainty"}/>
                         <Outlet />
                     </div>
                 </div>

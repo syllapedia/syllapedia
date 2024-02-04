@@ -28,7 +28,7 @@ export const userInfoSlice = createSlice({
   name: "userInfo",
   initialState,
   reducers: {
-    updateInfo: (state, data: PayloadAction<UserInfo>) => {
+    updateInfo: (state, data: PayloadAction<UserInfo | null>) => {
       state.user = data.payload;
     },
     updateCredential: (state, data: PayloadAction<string>) => {

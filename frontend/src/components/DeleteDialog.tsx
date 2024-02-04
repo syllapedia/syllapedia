@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAppSelector } from "../app/hooks";
 import { selectUserState } from "../features/user-info/userInfoSlice";
 import { CourseInfo } from "../models/courseModels";
@@ -36,7 +36,7 @@ function DeleteDialog({ open, course, handleClose, remove }: dialogProperties) {
                     </Grid><Grid item xs={6}>
                     </Grid>
                     <Grid item xs={3}>
-                        <Button onClick={escape} size="medium" variant="outlined" color="inherit">
+                        <Button onClick={escape} size="medium" variant="outlined" color="inherit" disabled={isDeleting}>
                             Cancel
                         </Button>
                     </Grid>
@@ -53,6 +53,7 @@ function DeleteDialog({ open, course, handleClose, remove }: dialogProperties) {
                                     handleClose();
                                 });
                             }}
+                            disabled={isDeleting}
                             style={{ width: "100%" }}>
                             Delete
                         </Button>

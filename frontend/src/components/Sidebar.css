@@ -5,13 +5,11 @@
 .drawer-open {
     width: var(--drawer-width-open);
     transition: width 0.4s ease;
-    overflow: hidden;
 }
 
 .drawer-closed {
     width: var(--drawer-width-closed);
     transition: width 0.4s ease;
-    overflow: hidden;
 }
 
 .tab {

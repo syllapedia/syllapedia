@@ -9,13 +9,13 @@ import "./SavedCourses.css";
 import { Typography, List, ListItem, ListItemButton, ListItemText, IconButton, CircularProgress, Menu, MenuItem } from '@mui/material';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import SearchIcon from '@mui/icons-material/Search';
 import Create from '@mui/icons-material/Create'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditDialog from "./EditDialog";
 import DeleteDialog from "./DeleteDialog";
 import { loadCourses, selectCourseState, updateCourseList } from "../features/course/courseSlice";
 import { selectChatbotState, updateCourse } from "../features/chatbot/chatbotSlice";
+import SearchIcon from '@mui/icons-material/Search';
 
 enum Action { EDIT='edit', DELETE='delete' };
 type DialogState = { [action in Action]: { isOpen: boolean, course: CourseInfo | null } };
@@ -106,6 +106,27 @@ function SavedCourses() {
                                             <span>
                                                 {course.title}
                                             </span>
+                                            <IconButton onClick={(e) => handleMenuClick(e, course)}>
+                                                <MoreHorizIcon />
+                                            </IconButton>
+                                            <Menu
+                                                anchorEl={anchorEl}
+                                                open={Boolean(anchorEl) && selectedCourse === course}
+                                                onClose={handleMenuClose}
+                                            >
+                                                <MenuItem onClick={() => { edit(course); handleMenuClose(); }}>
+                                                    <Create></Create> 
+                                                    <Typography paddingLeft={"10px"}>
+                                                        Edit
+                                                    </Typography>
+                                                </MenuItem>
+                                                <MenuItem onClick={() => { del(course); handleMenuClose(); }}>
+                                                    <DeleteOutlineIcon color="primary"></DeleteOutlineIcon>
+                                                    <Typography color="error" paddingLeft={"10px"}>
+                                                        Delete
+                                                    </Typography>
+                                                </MenuItem>
+                                            </Menu>
                                         </>
                                     }
                                     primaryTypographyProps={{ 
@@ -185,6 +206,23 @@ function SavedCourses() {
                     handleClose={handleDialog(Action.DELETE).close}
                     remove={removeCourse}
                 />
+            : 
+            <div className="message">
+                <SearchIcon 
+                    fontSize="medium" 
+                    className="search-icon" 
+                    style={{
+                        color: theme.palette.text.secondary, 
+                        borderColor: theme.palette.text.secondary
+                    }}>
+                </SearchIcon>
+                <Typography color={theme.palette.text.secondary} variant="h5" className="bold-text">
+                    Find Courses
+                </Typography>
+                <Typography color={theme.palette.text.secondary} variant="body2">
+                    You haven't saved any courses yet! Browse courses and save your favorites here for easy access.
+                </Typography>
+            </div>)
             }
         </List>
     );

@@ -9,7 +9,6 @@
 .file-text {
     text-decoration: underline;
     cursor: pointer;
-    text-align: 'center';
     line-height: 2;
     margin-left: 15px;
 }

@@ -4,12 +4,13 @@ import { useAppSelector, useAppDispatch } from "../app/hooks";
 import { selectChatbotState, updateQuestion, processQuestion, resetChatbot } from "../features/chatbot/chatbotSlice";
 import SendIcon from '@mui/icons-material/Send';
 import ReplayIcon from '@mui/icons-material/Replay';
-import { IconButton } from '@mui/material';
+import { IconButton, useTheme } from '@mui/material';
 
 function ChatInput() {
     const chatbot = useAppSelector(selectChatbotState);
     const dispatch = useAppDispatch();
 
+    const theme = useTheme()
     const [message, setMessage] = useState('');
     const [isEnabled, setIsEnabled] = useState(true);
 
@@ -42,29 +43,27 @@ function ChatInput() {
                         <div style={{ marginBottom: 3.5 }}>Reset</div>
                     </div>
             }
-            <form className="input-container" style={{ opacity: isEnabled ? 1 : 0.3 }} onSubmit={handleSubmit}>
+            <form className="input-container" style={{ opacity: isEnabled ? 1 : 0.3, borderColor: theme.palette.primary.main }} onSubmit={handleSubmit}>
                 <input 
-                    type="text" 
+                    type="text"
                     className="text-input" 
                     placeholder="Message..."
                     onChange={handleInputChange}
                     value={message}
                     disabled={!isEnabled}    
                 />
-                <IconButton type="submit" disableRipple sx={{ padding: 0 }} disabled={!isEnabled}>
+                <IconButton type="submit" disableRipple disabled={!isEnabled}>
                     <SendIcon 
                         style={{ 
-                            height: 30, 
-                            margin: 3, 
-                            padding: "0px 12px 0px 15px", 
-                            backgroundColor: '#b91c1c', 
-                            color: '#ffffff', 
-                            borderRadius: 19 
+                            backgroundColor: theme.palette.primary.main,
+                            padding: "7px",
+                            color: "#e5e5e5",
+                            borderRadius: "100%" 
                         }} 
                     />
                 </IconButton>
             </form>
-            <div className="disclaimer">Note: Syllapedia may make mistakes when answering requests or highlighting sources</div>
+            <div className="disclaimer">Note: Syllapedia may make mistakes when answering questions or highlighting sources</div>
         </>
     );
 }

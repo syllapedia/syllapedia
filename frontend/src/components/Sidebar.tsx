@@ -22,9 +22,12 @@ function Sidebar() {
     const [selectedTab, setSelectedTab] = useState("saved");
 
     useEffect(() => {
-        const rootStyle = document.documentElement.style;
+        const dark = document.documentElement.style;
+        const light = document.querySelector(".light-theme") as HTMLElement;
         if (user!.user!.permission === "admin" || user!.user!.permission === "instructor") {
-            rootStyle.setProperty("--num-tabs", "4");
+            dark.setProperty("--num-tabs", "4");
+            if (light)
+                light.style.setProperty("--num-tabs", "4");
         }
     }, []);
 
@@ -52,12 +55,12 @@ function Sidebar() {
             <CreateDialog open={dialogOpen} handleDialog={handleDialog}/>
 
             <Drawer
-                className={`drawer-${drawerOpen ? 'open' : 'closed'}`}
+                className={`drawer-${drawerOpen ? "open" : "closed"}`}
                 variant="permanent"
                 anchor="left"
                 open={drawerOpen}
             >
-                <List className={`drawer-${drawerOpen ? 'open' : 'closed'}`} disablePadding>
+                <List className={`drawer-${drawerOpen ? "open" : "closed"}`} disablePadding>
                     <MenuTab open={drawerOpen} handleDrawerToggle={handleDrawerToggle}/>
 
                     <Divider />

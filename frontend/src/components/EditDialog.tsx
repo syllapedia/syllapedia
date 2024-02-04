@@ -5,12 +5,11 @@ import { CourseInfo, setCourseInfo } from "../models/courseModels";
 import { setCourse } from "../services/httpService";
 import { subjectToCode, codeToSubject } from "../models/courseModels";
 import "./EditDialog.css";
-import { Dialog, DialogContent, DialogTitle, Grid, Button, Divider, LinearProgress } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, Grid, Button, Divider, LinearProgress, Typography } from '@mui/material';
 import CourseNameView from "./CourseNameView";
 import SubjectDropdown from "./SubjectDropdown";
 import CourseInput from "./CourseInput";
 import UploadSyllabus from "./UploadSyllabus";
-import ErrorText from "./ErrorText";
 import { selectCourseState, updateCourseList } from "../features/course/courseSlice";
 
 interface dialogProperties {
@@ -45,7 +44,7 @@ function EditDialog({ open, course, handleClose }: dialogProperties) {
             const file = event.target.files[0];
             const reader = new FileReader();
             reader.onloadend = () => {
-                const base64String = (reader.result as string).split(',')[1];
+                const base64String = (reader.result as string).split(",")[1];
                 setSyllabus(base64String);
             };
             reader.readAsDataURL(file);
@@ -122,19 +121,21 @@ function EditDialog({ open, course, handleClose }: dialogProperties) {
                         <CourseInput handleInput={coursePropertiesHandler("title")} size="medium" label="Name" defaultValue={courseProperties.title}/>
                     </Grid>
                     <Grid item xs={12}>
-                        <UploadSyllabus syllabus={syllabus} handleSyllabus={handleSyllabus} size="medium"/>
+                        <UploadSyllabus syllabus={syllabus} handleSyllabus={handleSyllabus} size="medium" disabled={isEditing}/>
                     </Grid>
                     <Grid item xs={12}>
-                        <ErrorText error={error}/>
+                        <Typography className="error-text" color={"error"}>
+                            {error}
+                        </Typography>
                     </Grid>
                     <Grid item xs={6}></Grid>
                     <Grid item xs={3}>
-                        <Button onClick={escape} size="medium" variant="outlined" color="inherit">
+                        <Button onClick={escape} size="medium" variant="outlined" color="inherit" disabled={isEditing}>
                             Cancel
                         </Button>
                     </Grid>
                     <Grid item xs={3}>
-                        <Button size="medium" variant="contained" color="primary" onClick={editCourse} style={{width: "100%"}}>
+                        <Button size="medium" variant="contained" color="primary" onClick={editCourse} disabled={isEditing} style={{width: "100%"}}>
                             Save
                         </Button>
                     </Grid>

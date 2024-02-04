@@ -27,6 +27,13 @@ function CourseSearch() {
     const [coursesStatus, setCoursesStatus] = useState<"loading" | "success" | "failed" | "">("")
     const [error, setError] = useState("");
 
+    const handleKeyPress = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            search();
+        }
+    };
+
     const coursePropertiesHandler = (key: "subject" | "number" | "title") => {
         return (value: string | null) => {
             setCourseProperties(prevState => ({...prevState, [key]: value ? value : ""}));
@@ -55,7 +62,7 @@ function CourseSearch() {
                     setCoursesStatus("success");
                 })
                 .catch(error => {
-                    console.error('Error fetching courses:', error);
+                    console.error("Error fetching courses:", error);
                     setCoursesStatus("failed");
                 });
         }
@@ -66,7 +73,7 @@ function CourseSearch() {
         }
     };
     return (
-        <div className="tab-content">
+        <div className="tab-content" onKeyDown={handleKeyPress}>
             <Grid container spacing={1} className="search-components">
                 <Grid item xs={7}>
                     <SubjectDropdown handleSubject={coursePropertiesHandler("subject")} size="small"/>
@@ -76,13 +83,13 @@ function CourseSearch() {
                 </Grid>
                 <Grid item xs style={{display:"flex"}}>
                     <CourseInput handleInput={coursePropertiesHandler("title")} size="small" label="Name"/>
-                    <IconButton size="medium" onClick={search} className="search-button" style={{ backgroundColor: theme.palette.primary.main }}>
+                    <IconButton size="medium" onClick={search} disabled={coursesStatus === "loading"} className="search-button" style={{ color: "#e5e5e5", backgroundColor: coursesStatus === "loading" ? theme.palette.primary.dark : theme.palette.primary.main }}>
                         <SearchIcon />
                     </IconButton>            
                 </Grid>
             </Grid>
             {coursesStatus === "loading" ? 
-                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height:"100%"}}>
+                <div style={{display: "flex", justifyContent: "center", alignItems: "center", height:"100%"}}>
                     <CircularProgress color="primary" />
                 </div> :
                     coursesStatus === "success" ? foundCourses.length ?

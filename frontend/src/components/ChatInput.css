@@ -2,12 +2,14 @@
     display: flex;
     align-items: center;
 
+    background-color: var(--background-paper);
+    color: var(--text-primary);
+
     border-style: solid;
-    border-width: 3px;
-    border-radius: 24px;
-    border-color: #b91c1c;
+    border-width: 2px;
+    border-radius: 30px;
     
-    height: 35px;
+    height: 50px;
     width: 70%;
     min-width: 300px;
 }
@@ -16,15 +18,19 @@
     flex: 1;
     height: 25px;
 
-    background-color: #0a0a0a;
-    color: #ffffff;
+    background-color: var(--background-paper);
+    color: var(--text-primary);
 
     font-size: medium;
 
-    outline: none;
+    outline-width: none;
     border-style: none;
 
     margin-left: 20px;
+}
+
+textarea:focus, input:focus{
+    outline: none;
 }
 
 .reset-button {
@@ -32,14 +38,14 @@
     align-items: center;
     padding: 6px 0px;
      
-    color: #ffffff;
+    color: var(--text-primary);
 
     text-decoration-line: underline;
     cursor: pointer;
 }
 
 .disclaimer {
-    color: #d7d7d7;
+    color: var(--text-secondary);
     margin: 7px 0px 15px 0px;
     font-size: small;
 }

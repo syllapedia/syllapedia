@@ -14,18 +14,17 @@
 
     font-size: medium;
 
-    color: #ffffff;
     white-space: break-spaces;
 }
 
 .user-bubble {
     border-radius: 12px 12px 0px 12px;
-    background-color: #b91c1c;
+    color: #e5e5e5;
     align-self: flex-end;
 }
 
 .bot-bubble {
     border-radius: 12px 12px 12px 0px;
-    background-color: #343434;
+    color: var(--text-primary);
     align-self: flex-start;
 }

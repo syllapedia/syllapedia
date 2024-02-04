@@ -1,0 +1,25 @@
+.profile {
+    display: flex;
+    cursor: pointer;
+    width: var(--profile-width);
+}
+
+.avatar {
+    padding: 4px;
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.profile-text {
+    max-width: 172px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.menu-item {
+    width: var(--profile-width);
+}
+
+.menu-text {
+    padding-left: 10px;
+}
