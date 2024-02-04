@@ -13,11 +13,29 @@ code {
 }
 
 :root {
-  --primary-color: #b91c1c;
-  --secondary-color: #6d28d9;
-  --background-color-paper: #0a0a0a;
-  --background-color-default: #262626;
-  --text-color-primary: #e5e5e5;
+  --background-paper: #0a0a0a;
+  --background-default: #262626;
+  --text-primary: #e5e5e5;
+  --text-secondary: #a3a3a3;
+  --text-disabled: #d4d4d4;
+
+  --navbar-height: 60px;
+  --tab-height: 60px;
+  --divider-height: 0.8px;
+  --drawer-width-open: 260px;
+  --drawer-width-closed: 60px;
+  --profile-width: 230px;
+
+  --icon-size: 40px;
+  --num-tabs: 3;
+}
+
+.light-theme {
+  --background-paper: #fafafa;
+  --background-default: #e5e5e5;
+  --text-primary: #262626;
+  --text-secondary: #525252;
+  --text-disabled: #404040;
 
   --navbar-height: 60px;
   --tab-height: 60px;

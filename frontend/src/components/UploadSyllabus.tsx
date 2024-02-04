@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "./UploadSyllabus.css"
-import { Button, Typography, useTheme } from '@mui/material';
+import { Button, useTheme } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 
 interface uploadSyllabusProperties {
@@ -26,7 +26,7 @@ function UploadSyllabus({syllabus, handleSyllabus, size}: uploadSyllabusProperti
     const openFile = () => {
         if (file) {
             const fileURL = URL.createObjectURL(file);
-            window.open(fileURL, '_blank');
+            window.open(fileURL, "_blank");
         }
     };
     return (

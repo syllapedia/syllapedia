@@ -31,18 +31,16 @@ function Sidebar() {
                     setCoursesStatus("success");
                 })
                 .catch(error => {
-                    console.error('Error fetching courses:', error);
+                    console.error("Error fetching courses:", error);
                     setCoursesStatus("failed");
                 });
         }
     };
 
     useEffect(() => {
-        if (user.user && user.status === 'idle') {
+        if (user.user && user.status === "idle") {
             const rootStyle = document.documentElement.style;
-            if (user.user.permission === "admin" || user.user.permission === "instructor") {
-                rootStyle.setProperty("--num-tabs", "4");
-            }
+            rootStyle.setProperty("--num-tabs", (user.user.permission === "admin" || user.user.permission === "instructor") ? "4" : "3");
             updateUserCourses();
         }
     }, [user.user]);
@@ -73,12 +71,12 @@ function Sidebar() {
             <CreateDialog open={createDialogOpen} handleDialog={handleCreateDialog} userCourses={userCourses} setUserCourses={setUserCourses}/>
 
             <Drawer
-                className={`drawer-${drawerOpen ? 'open' : 'closed'}`}
+                className={`drawer-${drawerOpen ? "open" : "closed"}`}
                 variant="permanent"
                 anchor="left"
                 open={drawerOpen}
             >
-                <List className={`drawer-${drawerOpen ? 'open' : 'closed'}`} disablePadding>
+                <List className={`drawer-${drawerOpen ? "open" : "closed"}`} disablePadding>
                     <MenuTab open={drawerOpen} handleDrawerToggle={handleDrawerToggle}/>
 
                     <Divider />

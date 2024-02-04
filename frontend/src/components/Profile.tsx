@@ -30,12 +30,12 @@ function Profile() {
         <div onClick={e => handleMenuClick(e)} className="profile">
             {user && user.user && 
                 <>
-                    <Avatar sx={{ bgcolor: theme.palette.primary.light }} className="avatar">{nameToInitials(user.user.name)}</Avatar>
+                    <Avatar sx={{ color: "#e5e5e5", bgcolor: theme.palette.primary.main }} className="avatar">{nameToInitials(user.user.name)}</Avatar>
                     <div style={{display: "block"}}>
-                        <Typography color={theme.palette.text.primary}>
+                        <Typography color={theme.palette.text.primary} className="profile-text">
                             {user.user.name}
                         </Typography>
-                        <Typography color={theme.palette.text.secondary}>
+                        <Typography color={theme.palette.text.secondary} className="profile-text">
                             {user.user.email}
                         </Typography>
                         <Menu open={openMenu} anchorEl={anchorEl} className="menu">

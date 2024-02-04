@@ -39,7 +39,7 @@ function CreateDialog({ open, handleDialog, userCourses, setUserCourses }: dialo
             const file = event.target.files[0];
             const reader = new FileReader();
             reader.onloadend = () => {
-                const base64String = (reader.result as string).split(',')[1];
+                const base64String = (reader.result as string).split(",")[1];
                 setSyllabus(base64String);
             };
             reader.readAsDataURL(file);

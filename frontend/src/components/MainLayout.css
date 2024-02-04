@@ -27,17 +27,17 @@
     border-radius: 10px; 
     display: flexbox; 
     white-space: nowrap;
-    background-color: #262626;
+    background-color: var(--background-default);
 }
 
 ::-webkit-scrollbar-track {
     border-radius: 10px;
-    background-color: #0a0a0a;
+    background-color: var(--background-paper);
 }
 
 ::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    background-color: #2e2e2e;
+    background-color: var(--background-default);
 }
 
 ::-webkit-scrollbar {

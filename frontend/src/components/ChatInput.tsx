@@ -43,7 +43,7 @@ function ChatInput() {
                         <div style={{ marginBottom: 3.5 }}>Reset</div>
                     </div>
             }
-            <form className="input-container" style={{ opacity: isEnabled ? 1 : 0.3 }} onSubmit={handleSubmit}>
+            <form className="input-container" style={{ opacity: isEnabled ? 1 : 0.3, borderColor: theme.palette.primary.main }} onSubmit={handleSubmit}>
                 <input 
                     type="text"
                     className="text-input" 
@@ -57,6 +57,7 @@ function ChatInput() {
                         style={{ 
                             backgroundColor: theme.palette.primary.main,
                             padding: "7px",
+                            color: "#e5e5e5",
                             borderRadius: "100%" 
                         }} 
                     />
