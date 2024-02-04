@@ -120,7 +120,7 @@ function EditDialog({ currentCourse, setCurrentCourse, open, handleDialog, userC
                         <CourseInput handleInput={coursePropertiesHandler("title")} size="medium" label="Name" defaultValue={courseProperties.title}/>
                     </Grid>
                     <Grid item xs={12}>
-                        <UploadSyllabus syllabus={syllabus} handleSyllabus={handleSyllabus} size="medium"/>
+                        <UploadSyllabus syllabus={syllabus} handleSyllabus={handleSyllabus} size="medium" disabled={isEditing}/>
                     </Grid>
                     <Grid item xs={12}>
                         <Typography className="error-text" color={"error"}>
@@ -129,12 +129,12 @@ function EditDialog({ currentCourse, setCurrentCourse, open, handleDialog, userC
                     </Grid>
                     <Grid item xs={6}></Grid>
                     <Grid item xs={3}>
-                        <Button onClick={escape} size="medium" variant="outlined" color="inherit">
+                        <Button onClick={escape} size="medium" variant="outlined" color="inherit" disabled={isEditing}>
                             Cancel
                         </Button>
                     </Grid>
                     <Grid item xs={3}>
-                        <Button size="medium" variant="contained" color="primary" onClick={edit} style={{width: "100%"}}>
+                        <Button size="medium" variant="contained" color="primary" onClick={edit} disabled={isEditing} style={{width: "100%"}}>
                             Save
                         </Button>
                     </Grid>

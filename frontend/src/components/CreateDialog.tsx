@@ -108,7 +108,7 @@ function CreateDialog({ open, handleDialog, userCourses, setUserCourses }: dialo
                         <CourseInput handleInput={coursePropertiesHandler("title")} size="medium" label="Name"/>
                     </Grid>
                     <Grid item xs={12}>
-                        <UploadSyllabus syllabus={syllabus} handleSyllabus={handleSyllabus} size="medium"/>
+                        <UploadSyllabus syllabus={syllabus} handleSyllabus={handleSyllabus} size="medium" disabled={isCreating}/>
                     </Grid>
                     <Grid item xs={12}>
                         <Typography className="error-text" color={"error"}>
@@ -117,12 +117,12 @@ function CreateDialog({ open, handleDialog, userCourses, setUserCourses }: dialo
                     </Grid>
                     <Grid item xs={6}></Grid>
                     <Grid item xs={3}>
-                        <Button onClick={() => escape()} size="medium" variant="outlined" color="inherit">
+                        <Button onClick={() => escape()} size="medium" variant="outlined" color="inherit" disabled={isCreating}>
                             Cancel
                         </Button>
                     </Grid>
                     <Grid item xs={3}>
-                        <Button size="medium" variant="contained" color="primary" onClick={create}>
+                        <Button size="medium" variant="contained" color="primary" onClick={create} disabled={isCreating}>
                             Create
                         </Button>
                     </Grid>

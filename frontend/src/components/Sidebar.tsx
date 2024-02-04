@@ -39,11 +39,17 @@ function Sidebar() {
 
     useEffect(() => {
         if (user.user && user.status === "idle") {
-            const rootStyle = document.documentElement.style;
-            rootStyle.setProperty("--num-tabs", (user.user.permission === "admin" || user.user.permission === "instructor") ? "4" : "3");
+            const num_tabs = (user.user.permission === "admin" || user.user.permission === "instructor") ? "4" : "3";
+            const dark = document.documentElement.style;
+            dark.setProperty("--num-tabs", num_tabs);
+            const light = document.querySelector(".light-theme") as HTMLElement;
+            if (light) {
+                light.style.setProperty("--num-tabs", num_tabs);
+            }
+
             updateUserCourses();
         }
-    }, [user.user]);
+    }, [user.user, user.user?.permission]);
 
     const handleCreateDialog = (open: boolean) => {
         createSetDialog(open);
