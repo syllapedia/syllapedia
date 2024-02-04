@@ -42,10 +42,7 @@ def get_user_courses(user_id):
 @user_api.route("/user/<user_id>/courses/search", methods=["GET"])
 def search_available_courses(user_id):
     def action():
-        data = {}
-        for key, value in request.args.items():
-            data[key] = value
-        
+        data = dict(request.args.items())
         # Searches and returns courses in user courses with query
         # Filters by course subject, course number, and/or course_title
         return course_search(user_id, data)

@@ -150,6 +150,12 @@ def add_new_course(user_id, course_id):
     # Checks if user does not exist
     if not user_exists(user_id):
         return Response("User could not be found", 404)
+    
+    # Checks if course does not exist
+    try:
+        course = courses.find_one({"_id": course_id})
+    except:
+        return Response("Course could not be found", 404) 
 
     # Gets user courses
     user_courses = users.find_one({"_id": user_id})["courses"]
@@ -160,10 +166,11 @@ def add_new_course(user_id, course_id):
         user_courses.append(ObjectId(course_id))
         users.update_one({"_id": user_id}, {"$set": {"courses": user_courses}})
 
-        # Returns user
-        return get_user_data(user_id)
-    else:
-        return Response(status=400)
+    # Sanitizes added course
+    course["_id"] = str(course["_id"])
+
+    # Returns added course
+    return jsonify(course), 200
     
 def remove_course_data(user_id, course_id):
     # Checks if user does not exist

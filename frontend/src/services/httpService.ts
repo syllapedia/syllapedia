@@ -19,7 +19,7 @@ export const userSearchCourses = async (id: string, query: courseQuery, authToke
     return await get(`/user/${id}/courses/search?${queryString}`, authToken);
 }
 export const createUser = async (info: UserInfo, authToken: string) => await post('/user', authToken, { "user_id": info._id, "name": info.name, "email": info.email });
-export const askQuestion = async (info: QuestionInfo, authToken: string) => await post('/chat', authToken, { "user_id": info.userId, "course_id": info.courseId, "question": info.question }); 
+export const askQuestion = async (info: QuestionInfo, authToken: string) => await post('/chat', authToken, { "course_id": info.courseId, "question": info.question }); 
 
 async function get(url: string, authToken: string) {
     const requestInfo = { 

@@ -32,7 +32,6 @@ export const processQuestion = createAsyncThunk(
     return await askQuestion({
       // courseId: state.chatbotState.course._id,
       courseId: "659227603261d0a8eab9732c",
-      userId: state.userState.user._id,
       question: state.chatbotState.question
     }, state.userState.userCredential)
     .then(response => response.valid ? response : Promise.reject());
