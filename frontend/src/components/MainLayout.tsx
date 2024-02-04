@@ -1,9 +1,9 @@
 import './MainLayout.css';
-import Navbar from './Navbar';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAppSelector } from '../app/hooks';
 import { selectUserState } from '../features/user-info/userInfoSlice';
 import Sidebar from './Sidebar';
+import Navbar from './Navbar';
 
 function MainLayout() {
     const user = useAppSelector(selectUserState);

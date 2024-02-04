@@ -1,11 +1,13 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit"
 import userInfoReducer from "../features/user-info/userInfoSlice"
 import chatbotReducer from "../features/chatbot/chatbotSlice"
+import courseReducer from "../features/course/courseSlice"
 
 export const store = configureStore({
   reducer: {
     userState: userInfoReducer,
-    chatbotState: chatbotReducer
+    chatbotState: chatbotReducer,
+    courseState: courseReducer
   },
 })
 

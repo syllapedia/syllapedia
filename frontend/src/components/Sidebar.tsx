@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { useAppSelector } from "../app/hooks";
-import { selectUserState } from "../features/user-info/userInfoSlice";
-import { getUserCourses } from "../services/httpService";
-import { CourseInfo } from "../models/courseModels";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import "./Sidebar.css";
+import { Divider, Drawer, List, Collapse } from '@mui/material';
 import CourseSearch from "./CourseSearch";
 import CreateDialog from "./CreateDialog";
 import MenuTab from "./MenuTab";
@@ -10,50 +9,29 @@ import SavedTab from "./SavedTab";
 import SavedCourses from "./SavedCourses";
 import FindTab from "./FindTab";
 import CreateTab from "./CreateTab";
-import "./Sidebar.css";
-import { Divider, Drawer, List, Collapse } from '@mui/material';
+import { selectUserState } from "../features/user-info/userInfoSlice";
+import { loadCourses } from "../features/course/courseSlice";
 
 function Sidebar() {
+    const dispatch = useAppDispatch();
+
     const user = useAppSelector(selectUserState);
-    const [userCourses, setUserCourses] = useState<CourseInfo[]>([]);
-    const [coursesStatus, setCoursesStatus] = useState<"loading" | "success" | "failed" | "">("")
-    const [createDialogOpen, createSetDialog] = useState(false);
+
+    const [dialogOpen, setDialogOpen] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(true);
     const [selectedTab, setSelectedTab] = useState("saved");
-    const [selectedCourse, setSelectedCourse] = useState<CourseInfo>();
-
-    const updateUserCourses = () => {
-        if (user.user) {
-            setCoursesStatus("loading");
-            getUserCourses(user.user._id, user.userCredential)
-                .then(fetchedCourses => {
-                    setUserCourses(fetchedCourses);
-                    setCoursesStatus("success");
-                })
-                .catch(error => {
-                    console.error("Error fetching courses:", error);
-                    setCoursesStatus("failed");
-                });
-        }
-    };
 
     useEffect(() => {
-        if (user.user && user.status === "idle") {
-            const num_tabs = (user.user.permission === "admin" || user.user.permission === "instructor") ? "4" : "3";
-            const dark = document.documentElement.style;
-            dark.setProperty("--num-tabs", num_tabs);
-            const light = document.querySelector(".light-theme") as HTMLElement;
-            if (light) {
-                light.style.setProperty("--num-tabs", num_tabs);
-            }
-
-            updateUserCourses();
+        const dark = document.documentElement.style;
+        const light = document.querySelector(".light-theme") as HTMLElement;
+        if (user!.user!.permission === "admin" || user!.user!.permission === "instructor") {
+            dark.setProperty("--num-tabs", "4");
+            if (light)
+                light.style.setProperty("--num-tabs", "4");
         }
-    }, [user.user, user.user?.permission]);
+    }, []);
 
-    const handleCreateDialog = (open: boolean) => {
-        createSetDialog(open);
-    };
+    const handleDialog = (open: boolean) => setDialogOpen(open);
 
     const handleDrawerToggle = () => {
         setDrawerOpen(!drawerOpen);
@@ -74,7 +52,7 @@ function Sidebar() {
 
     return (
         <div className="root">
-            <CreateDialog open={createDialogOpen} handleDialog={handleCreateDialog} userCourses={userCourses} setUserCourses={setUserCourses}/>
+            <CreateDialog open={dialogOpen} handleDialog={handleDialog}/>
 
             <Drawer
                 className={`drawer-${drawerOpen ? "open" : "closed"}`}
@@ -90,19 +68,19 @@ function Sidebar() {
                     <SavedTab open={drawerOpen} handleSavedClick={handleSavedClick}/>
                     {user.user && user.user._id && drawerOpen && 
                         <Collapse in={selectedTab === "saved"} timeout={400}> 
-                            <SavedCourses coursesStatus={coursesStatus} userCourses={userCourses} setUserCourses={setUserCourses} selectedCourse={selectedCourse} setSelectedCourse={setSelectedCourse}/>
+                            <SavedCourses />
                         </Collapse>
                     }
                     
                     <FindTab open={drawerOpen} handleFindClick={handleFindClick}/>
                     {drawerOpen && 
                         <Collapse in={selectedTab === "find"} timeout={400}>
-                            <CourseSearch userCourses={userCourses} setUserCourses={setUserCourses}/>
+                            <CourseSearch />
                         </Collapse>
                     }
 
                     {user.user && (user.user.permission === "instructor" || user.user.permission === "admin") && 
-                        <CreateTab open={drawerOpen} handleCreateDialog={handleCreateDialog} />
+                        <CreateTab open={drawerOpen} handleCreateDialog={handleDialog} />
                     }
                 </List>
             </Drawer>
