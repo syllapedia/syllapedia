@@ -2,11 +2,13 @@ import './MainLayout.css';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAppSelector } from '../app/hooks';
 import { selectUserState } from '../features/user-info/userInfoSlice';
+import { selectChatbotState } from '../features/chatbot/chatbotSlice';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 
 function MainLayout() {
-    const user = useAppSelector(selectUserState);
+    const userState = useAppSelector(selectUserState);
+    const chatbotState = useAppSelector(selectChatbotState);
     const location = useLocation();
 
     const PageLayout = () => (
@@ -14,7 +16,7 @@ function MainLayout() {
                 <div className="outer-layout-container">
                     <Sidebar />
                     <div className="inner-layout-container">
-                        <Navbar title={"COMPSCI 240 - Reasoning Under Uncertainty"}/>
+                        <Navbar title={chatbotState.course ? chatbotState.course.name : "No course selected"}/>
                         <Outlet />
                     </div>
                 </div>
@@ -25,7 +27,7 @@ function MainLayout() {
     return (
         <> 
             {
-                location.pathname !== "/login" && (user.user === null || user.status === 'failed') ?
+                location.pathname !== "/login" && (userState.user === null || userState.status === 'failed') ?
                     <Navigate to="/login" />
                 :
                     <PageLayout />

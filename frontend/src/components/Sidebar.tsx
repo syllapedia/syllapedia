@@ -10,11 +10,8 @@ import SavedCourses from "./SavedCourses";
 import FindTab from "./FindTab";
 import CreateTab from "./CreateTab";
 import { selectUserState } from "../features/user-info/userInfoSlice";
-import { loadCourses } from "../features/course/courseSlice";
 
 function Sidebar() {
-    const dispatch = useAppDispatch();
-
     const user = useAppSelector(selectUserState);
 
     const [dialogOpen, setDialogOpen] = useState(false);

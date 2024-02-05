@@ -6,7 +6,7 @@ from database import db
 
 courses = db["Courses"]
 
-def chat_respond(user_id, course_id, question):
+def chat_respond(course_id, question):
   # Gets syllabus as string and pdf blob
   try:
     txt = courses.find_one({"_id":ObjectId(course_id)})["syllabus"]["txt"]

@@ -10,7 +10,7 @@ def ask_question():
     def action():
         data = request.get_json()
         # Generates and returns a chat response
-        return chat_respond(data["user_id"], data["course_id"], data["question"])
+        return chat_respond(data["course_id"], data["question"])
     
     return authorize(action)
 

@@ -13,6 +13,7 @@ import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import { CourseInfo, subjectToCode } from "../models/courseModels";
 import { courseQuery } from "../models/courseModels";
 import { selectCourseState, updateCourseList } from "../features/course/courseSlice";
+import { selectChatbotState, updateCourse } from "../features/chatbot/chatbotSlice";
 
 function CourseSearch() {    
     const theme = useTheme()
@@ -21,6 +22,7 @@ function CourseSearch() {
     
     const userState = useAppSelector(selectUserState);
     const courseState = useAppSelector(selectCourseState);
+    const chatbotState = useAppSelector(selectChatbotState)
 
     const [courseProperties, setCourseProperties] = useState<courseQuery>({subject:"", number:"", title:""});
     const [foundCourses, setFoundCourses] = useState<CourseInfo[]>([]);

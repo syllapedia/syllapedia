@@ -1,5 +1,5 @@
 import { CourseInfo } from "../models/courseModels";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useTheme } from '@mui/material/styles';
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { selectUserState } from "../features/user-info/userInfoSlice";
@@ -13,7 +13,7 @@ import Create from '@mui/icons-material/Create'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditDialog from "./EditDialog";
 import DeleteDialog from "./DeleteDialog";
-import { loadCourses, selectCourseState, updateCourseList } from "../features/course/courseSlice";
+import { selectCourseState, updateCourseList } from "../features/course/courseSlice";
 import { selectChatbotState, updateCourse } from "../features/chatbot/chatbotSlice";
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -58,16 +58,20 @@ function SavedCourses() {
     }
 
     const removeCourse = (courseId: string) => {
-        dispatch(updateCourseList(courseState.courseList.filter(course => course._id !== courseId)));
+        const newCourses = courseState.courseList.filter(course => course._id !== courseId);
+        dispatch(updateCourseList(newCourses));
+        if (chatbotState.course && courseId === chatbotState.course._id)  {
+            if (newCourses.length > 0)    {
+                dispatch(updateCourse(newCourses[0]));
+            } else {
+                dispatch(updateCourse(null));
+            }
+        }
         removeUserCourse(userState.user!._id, courseId, userState.userCredential);
     };
 
     const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => setAnchorElement(event.currentTarget);
     const handleMenuClose = () => setAnchorElement(null);
-
-    useEffect(() => {
-        dispatch(loadCourses({ userId: userState.user!._id, userCredential: userState.userCredential }));
-    }, []);
 
     return (
         <List disablePadding className="tab-content">
@@ -106,27 +110,7 @@ function SavedCourses() {
                                             <span>
                                                 {course.title}
                                             </span>
-                                            <IconButton onClick={(e) => handleMenuClick(e, course)}>
-                                                <MoreHorizIcon />
-                                            </IconButton>
-                                            <Menu
-                                                anchorEl={anchorEl}
-                                                open={Boolean(anchorEl) && selectedCourse === course}
-                                                onClose={handleMenuClose}
-                                            >
-                                                <MenuItem onClick={() => { edit(course); handleMenuClose(); }}>
-                                                    <Create></Create> 
-                                                    <Typography paddingLeft={"10px"}>
-                                                        Edit
-                                                    </Typography>
-                                                </MenuItem>
-                                                <MenuItem onClick={() => { del(course); handleMenuClose(); }}>
-                                                    <DeleteOutlineIcon color="primary"></DeleteOutlineIcon>
-                                                    <Typography color="error" paddingLeft={"10px"}>
-                                                        Delete
-                                                    </Typography>
-                                                </MenuItem>
-                                            </Menu>
+
                                         </>
                                     }
                                     primaryTypographyProps={{ 
@@ -206,23 +190,6 @@ function SavedCourses() {
                     handleClose={handleDialog(Action.DELETE).close}
                     remove={removeCourse}
                 />
-            : 
-            <div className="message">
-                <SearchIcon 
-                    fontSize="medium" 
-                    className="search-icon" 
-                    style={{
-                        color: theme.palette.text.secondary, 
-                        borderColor: theme.palette.text.secondary
-                    }}>
-                </SearchIcon>
-                <Typography color={theme.palette.text.secondary} variant="h5" className="bold-text">
-                    Find Courses
-                </Typography>
-                <Typography color={theme.palette.text.secondary} variant="body2">
-                    You haven't saved any courses yet! Browse courses and save your favorites here for easy access.
-                </Typography>
-            </div>)
             }
         </List>
     );

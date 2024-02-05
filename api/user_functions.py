@@ -153,7 +153,7 @@ def add_new_course(user_id, course_id):
     
     # Checks if course does not exist
     try:
-        course = courses.find_one({"_id": course_id})
+        course = courses.find_one({"_id": ObjectId(course_id)})
     except:
         return Response("Course could not be found", 404) 
 
