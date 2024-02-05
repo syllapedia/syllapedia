@@ -18,6 +18,7 @@
 
 .menu-item {
     width: var(--profile-width);
+    height: 40px;
 }
 
 .menu-text {

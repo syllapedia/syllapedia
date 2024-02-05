@@ -30,8 +30,7 @@ export const processQuestion = createAsyncThunk(
     }
 
     return await askQuestion({
-      // courseId: state.chatbotState.course._id,
-      courseId: "659227603261d0a8eab9732c",
+      courseId: state.chatbotState.course._id,
       question: state.chatbotState.question
     }, state.userState.userCredential)
     .then(response => response.valid ? response : Promise.reject());
@@ -47,7 +46,7 @@ export const chatbotSlice = createSlice({
       state.answer = "";
       state.status = "idle";
     },
-    updateCourse: (state, data: PayloadAction<CourseInfo>) => {
+    updateCourse: (state, data: PayloadAction<CourseInfo | null>) => {
       state.course = data.payload;
     },
     updateQuestion: (state, data: PayloadAction<string>) => {
