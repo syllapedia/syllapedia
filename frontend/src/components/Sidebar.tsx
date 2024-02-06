@@ -48,7 +48,7 @@ function Sidebar() {
     };
 
     return (
-        <div className="root">
+        <div className="drawer">
             <CreateDialog open={dialogOpen} handleDialog={handleDialog}/>
 
             <Drawer

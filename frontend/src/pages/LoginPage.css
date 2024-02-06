@@ -15,13 +15,19 @@
 
     background: linear-gradient(145deg, rgba(135,0,0,1) 0%, rgba(25,10,5,1) 100%);
     
-    width: 65%;
+    width: 100%;
     height: 100%;
 }
 
 .logo {
     font-weight: bolder;
-    font-size: 60px;
+    font-size: 55px;
+    padding: 0px 10px 0px 10px;
+}
+
+.logo-subtitle {
+    font-size: 15px;
+    padding: 0px 10px 0px 10px;
 }
 
 .login-container {
@@ -31,13 +37,13 @@
     text-align: center;
     justify-content: center;
 
-    width: 35%;
+    width: 500px;
     height: 100%;
     
     background-color: var(--background-paper);
     color: var(--text-primary);
 
-    font-size: x-large;
+    font-size: large;
 }
 
 .login-button-container {
@@ -50,4 +56,15 @@
     color: var(--primary-color);
 
     height: 10px;
+}
+
+@media (max-width: 600px) {
+    .login-page {
+        display: flex;
+        flex-direction: column;
+    }
+    .login-container {
+        width: 100%;
+        height: 500px;
+    }
 }
