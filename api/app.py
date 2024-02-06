@@ -10,7 +10,7 @@ app = APIFlask(__name__)
 app.register_blueprint(chatbot_api)
 app.register_blueprint(user_api)
 app.register_blueprint(course_api)
-CORS(app, supports_credentials=True, origins=["http://localhost:3000", "https://syllapedia.com"])
+CORS(app, origins=["http://localhost:3000", "https://www.syllapedia.com"], supports_credentials=True)
 
 @app.route("/")
 def status():

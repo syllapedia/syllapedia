@@ -52,8 +52,8 @@ function Profile() {
                                     </MenuItem>
                                 }
                                 <MenuItem className="menu-item" onClick={logout}>
-                                    <LogoutIcon></LogoutIcon>
-                                    <Typography className="menu-text">Log Out</Typography>
+                                    <LogoutIcon color="primary"></LogoutIcon>
+                                    <Typography color="primary" className="menu-text">Log Out</Typography>
                                 </MenuItem>
                                 
                                 { /*user.user.permission !== "admin" &&
@@ -61,7 +61,7 @@ function Profile() {
                                         <DeleteIcon color={"primary"}></DeleteIcon>
                                         <Typography variant={"body1"} color={"primary"} className="menu-text">Delete Account</Typography>
                                     </MenuItem>
-                                */}
+                                */ }
                             </Menu>
                     </div>
                 </>
