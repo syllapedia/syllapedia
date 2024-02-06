@@ -1,8 +1,11 @@
 import requests
 from flask import request, Response
-from dotenv import dotenv_values
+from dotenv import load_dotenv
+import os
 
-env_keys = dotenv_values()
+# Load .env file and access all of its variables
+load_dotenv()
+env_keys = os.environ
 
 def validate_key():
     # Authorization Header should be present

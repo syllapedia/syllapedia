@@ -43,7 +43,9 @@ function LoginPage() {
                 <div className="logo">
                     Syllapedia
                 </div>
-                The syllabus scanning and course answering chatbot made for students and instructors
+                <div className="logo-subtitle">
+                    The syllabus scanning and course answering chatbot made for students and instructors
+                </div>
             </div>
             <div className="login-container">
                 { !user.user ? "Log in to your school email..." : <Navigate to="/" />}
