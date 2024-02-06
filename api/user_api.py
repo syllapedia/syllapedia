@@ -31,7 +31,7 @@ def get_user(user_id):
     
     return authorize(action)
 
-@user_api.route("/user/<user_id>/courses/", methods=["GET"])
+@user_api.route("/user/<user_id>/courses", methods=["GET"])
 def get_user_courses(user_id):
     def action():
         # Returns a user's courses
