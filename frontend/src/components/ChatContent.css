@@ -3,7 +3,12 @@
     flex-direction: column;
 
     margin-top: 20px;
-    width: 60%;
+    width: 70%;
+}
+
+.title {
+    text-align: center;
+    padding: 15px 0px 35px 0px;
 }
 
 .user-bubble, .bot-bubble {

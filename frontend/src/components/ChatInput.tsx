@@ -4,7 +4,7 @@ import { useAppSelector, useAppDispatch } from "../app/hooks";
 import { selectChatbotState, updateQuestion, processQuestion, resetChatbot } from "../features/chatbot/chatbotSlice";
 import SendIcon from '@mui/icons-material/Send';
 import ReplayIcon from '@mui/icons-material/Replay';
-import { IconButton, useTheme } from '@mui/material';
+import { IconButton, Input, useTheme } from '@mui/material';
 
 function ChatInput() {
     const chatbot = useAppSelector(selectChatbotState);
@@ -44,13 +44,14 @@ function ChatInput() {
                     </div>
             }
             <form className="input-container" style={{ opacity: isEnabled ? 1 : 0.3, borderColor: theme.palette.primary.main }} onSubmit={handleSubmit}>
-                <input 
+                <Input 
                     type="text"
                     className="text-input" 
                     placeholder="Message..."
                     onChange={handleInputChange}
                     value={message}
-                    disabled={!isEnabled}    
+                    disabled={!isEnabled}
+                    disableUnderline
                 />
                 <IconButton type="submit" disableRipple disabled={!isEnabled}>
                     <SendIcon 

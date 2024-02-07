@@ -1,13 +1,14 @@
 from openai import OpenAI
 from database import db
 import json
+from authorization import env_keys
 
 courses = db["Courses"]
 
 def create_completion_with_file(client, file, user_prompt):
     # Create the completion request
     completion = client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-3.5-turbo-0125",
         messages=[
             # Pre-response role
             {"role": "system", "content": "You are an academic assistant, specialized in addressing questions specifically related to the current course. Your responses are tailored to the course content and syllabus, and you provide sources from the course material. You focus solely on assisting with course-related queries."},
@@ -36,7 +37,7 @@ def openai_chat_respond(question, txt):
 
   try:
     # Gets OpenAI response
-    completion = create_completion_with_file(OpenAI(), txt, prompt)
+    completion = create_completion_with_file(OpenAI(api_key=env_keys['OPENAI_KEY']), txt, prompt)
     
     # Converts response into a json object
     response = json.loads(completion.choices[0].message.content)
