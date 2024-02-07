@@ -5,7 +5,7 @@
     align-items: center;
 
     background-color: var(--background-paper);
-    height: calc(100% - var(--navbar-height));
+    height: calc(100dvh - var(--navbar-height));
 }
 
 .scrollable-chat {

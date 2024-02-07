@@ -1,5 +1,5 @@
 .settings-page {
-    height: 100%;
+    height: 100dvh;
     background-color: var(--background-paper);
 }
 
