@@ -16,7 +16,7 @@ function MainLayout() {
                 <div className="outer-layout-container">
                     <Sidebar />
                     <div className="inner-layout-container">
-                        <Navbar title={chatbotState.course ? chatbotState.course.name : "No course selected"}/>
+                        <Navbar />
                         <Outlet />
                     </div>
                 </div>

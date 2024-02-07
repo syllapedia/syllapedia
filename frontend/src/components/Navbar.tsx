@@ -6,7 +6,7 @@ import { IconButton, Typography } from '@mui/material';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import { useTheme } from '@mui/material/styles';
 
-function Navbar({title}: {title: string}) {
+function Navbar({title}: {title?: string}) {
     const location = useLocation();
     const navigate = useNavigate();
     const theme = useTheme();
@@ -21,7 +21,7 @@ function Navbar({title}: {title: string}) {
             </div>
             <div>
                 <Typography color={theme.palette.text.primary} className="title">
-                    {title}
+                    {title ? title : ""}
                 </Typography>
             </div>
             <div>

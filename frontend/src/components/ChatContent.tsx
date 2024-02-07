@@ -4,7 +4,7 @@ import Typewriter from 'typewriter-effect';
 import { useAppSelector } from "../app/hooks";
 import { selectChatbotState } from "../features/chatbot/chatbotSlice";
 import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
-import { useTheme } from "@mui/material";
+import { Typography, useTheme } from "@mui/material";
 
 enum ChatRole {
     INTRO = 0,
@@ -96,6 +96,9 @@ function ChatContent() {
 
     return (
         <div className="chat-content">
+            <Typography color={theme.palette.text.primary} className="title" sx={{fontSize: 'min(4.5vw, 17px)',}}>
+                {chatbot.course?.name ? chatbot.course.name : "No Course Selected"}
+            </Typography>
             <div className="bot-bubble" style={{backgroundColor: theme.palette.background.default}}>
                 <AnimatedText 
                     role={ChatRole.INTRO} 

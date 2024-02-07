@@ -37,7 +37,7 @@
     text-align: center;
     justify-content: center;
 
-    width: 500px;
+    width: 700px;
     height: 100%;
     
     background-color: var(--background-paper);
@@ -58,7 +58,7 @@
     height: 10px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
     .login-page {
         display: flex;
         flex-direction: column;
