@@ -96,7 +96,7 @@ function ChatContent() {
 
     return (
         <div className="chat-content">
-            <Typography color={theme.palette.text.primary} className="title" sx={{fontSize: 'min(4.5vw, 17px)',}}>
+            <Typography color={theme.palette.text.primary} className="title" sx={{fontSize: "min(4.5vw, 17px)",}}>
                 {chatbot.course?.name ? chatbot.course.name : "No Course Selected"}
             </Typography>
             <div className="bot-bubble" style={{backgroundColor: theme.palette.background.default}}>
