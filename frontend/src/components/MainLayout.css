@@ -1,14 +1,14 @@
 .outer-layout-container {
     display: flex;
     flex-direction: row;
-    height: 100vh;
+    height: 100dvh;
 }
 
 .inner-layout-container {
     display: flex;
     flex-direction: column;
     flex: 1;
-    height: 100vh;
+    height: 100dvh;
 }
 
 .course.MuiListItemButton-root {
