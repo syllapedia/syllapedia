@@ -19,8 +19,8 @@ interface dialogProperties {
 function CreateDialog({ open, handleDialog }: dialogProperties) {
     const dispatch = useAppDispatch();
 
-    const user = useAppSelector(selectUserState);
-    const course = useAppSelector(selectCourseState);
+    const userState = useAppSelector(selectUserState);
+    const courseState = useAppSelector(selectCourseState);
 
     const [isCreating, setIsCreating] = useState(false);
     const [courseProperties, setCourseProperties] = useState({subject:"", number:"", title:""});
@@ -71,20 +71,22 @@ function CreateDialog({ open, handleDialog }: dialogProperties) {
         else if (syllabus === "")    {
             setError("Please upload the course syllabus");
         }
-        else if (user.user) {
+        else if (userState.user) {
             setIsCreating(true);
             createCourse({
                 subject: courseProperties.subject,
                 number: courseProperties.number,
                 title: courseProperties.title,
                 syllabus: syllabus,
-                user_id: user.user._id
-            }, user.userCredential)
+                user_id: userState.user._id
+            }, userState.userCredential)
             .then(response => {
                 if (typeof response === "string")   {
                     setError(response);
                 } else {
-                    dispatch(updateCourseList(course.courseList.concat(response)));
+                    if (userState.user) {
+                        dispatch(updateCourseList({courses: courseState.courseList.concat(response), userId: userState.user?._id}));
+                    }
                     escape();
                 }
                 setIsCreating(false);

@@ -1,3 +1,11 @@
+.title {
+    font-size: min(4.5vw, 17px);
+    color: var(--text-primary);
+    text-align: center;
+    overflow: hidden;
+    padding: 15px 5px 15px 5px;
+}
+
 .chat-page {
     flex: 1;
     display: flex;

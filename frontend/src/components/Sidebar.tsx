@@ -10,12 +10,18 @@ import SavedCourses from "./SavedCourses";
 import FindTab from "./FindTab";
 import CreateTab from "./CreateTab";
 import { selectUserState } from "../features/user-info/userInfoSlice";
+import { selectCourseState } from "../features/course/courseSlice";
+import { selectChatbotState, updateCourse } from "../features/chatbot/chatbotSlice";
 
 function Sidebar() {
     const user = useAppSelector(selectUserState);
+    const chatbotState = useAppSelector(selectChatbotState);
+    const courseState = useAppSelector(selectCourseState);
+
+    const dispatch = useAppDispatch();
 
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [drawerOpen, setDrawerOpen] = useState(true);
+    const [drawerOpen, setDrawerOpen] = useState(window.innerWidth / window.innerHeight > 1);
     const [selectedTab, setSelectedTab] = useState("saved");
 
     useEffect(() => {
@@ -35,16 +41,17 @@ function Sidebar() {
         setSelectedTab("saved");
     }
 
-    const handleDrawerOpen = () => setDrawerOpen(true);
-
     const handleSavedClick = () => {
         setSelectedTab("saved");
-        handleDrawerOpen();
+        if (!chatbotState.course)  {
+            dispatch(updateCourse(courseState.courseList[0]));
+        }
+        setDrawerOpen(true);
     };
     
     const handleFindClick = () => {
         setSelectedTab("find");
-        handleDrawerOpen();
+        setDrawerOpen(true);
     };
 
     return (

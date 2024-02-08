@@ -6,11 +6,6 @@
     width: 70%;
 }
 
-.title {
-    text-align: center;
-    padding: 15px 0px 35px 0px;
-}
-
 .user-bubble, .bot-bubble {
     padding: 10px 20px;
     margin-bottom: 20px;

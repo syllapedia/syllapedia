@@ -59,7 +59,9 @@ function SavedCourses() {
 
     const removeCourse = (courseId: string) => {
         const newCourses = courseState.courseList.filter(course => course._id !== courseId);
-        dispatch(updateCourseList(newCourses));
+        if (userState.user) {
+            dispatch(updateCourseList({courses: newCourses, userId: userState.user._id}));
+        }
         if (chatbotState.course && courseId === chatbotState.course._id)  {
             if (newCourses.length > 0)    {
                 dispatch(updateCourse(newCourses[0]));
