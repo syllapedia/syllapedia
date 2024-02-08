@@ -13,7 +13,7 @@ export interface UserState {
 const initialState: UserState = {
   user: null,
   userCredential: "",
-  status: "loading",
+  status: "idle",
 }
 
 export const selectUserState = (state: RootState) => state.userState;

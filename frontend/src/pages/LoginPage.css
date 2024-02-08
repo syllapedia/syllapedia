@@ -23,6 +23,7 @@
     font-weight: bolder;
     font-size: 55px;
     padding: 0px 10px 0px 10px;
+    margin-bottom: 15px;
 }
 
 .logo-subtitle {
@@ -48,6 +49,7 @@
 
 .login-button-container {
     margin-top: 30px;
+    height: 40px;
 }
 
 .login-error-message {
