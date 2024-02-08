@@ -57,7 +57,7 @@ function ChatContent() {
                 }}
             /> 
         : role === ChatRole.ANSWER && chatbot.status !== 'failed' ? (
-            <p style={{ margin: 0 }}>
+            <div style={{ margin: 0 }}>
                 { text }
                 <div style={{ display: 'inline-block', position: 'relative' }}>
                     <FormatQuoteIcon 
@@ -74,7 +74,7 @@ function ChatContent() {
                         onClick={openHighlight}
                     />
                 </div>
-            </p>
+            </div>
         ) : text;
     }; 
 
@@ -96,9 +96,6 @@ function ChatContent() {
 
     return (
         <div className="chat-content">
-            <Typography color={theme.palette.text.primary} className="title" sx={{fontSize: "min(4.5vw, 17px)",}}>
-                {chatbot.course?.name ? chatbot.course.name : "No Course Selected"}
-            </Typography>
             <div className="bot-bubble" style={{backgroundColor: theme.palette.background.default}}>
                 <AnimatedText 
                     role={ChatRole.INTRO} 

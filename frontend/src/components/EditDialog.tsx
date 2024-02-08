@@ -11,6 +11,7 @@ import SubjectDropdown from "./SubjectDropdown";
 import CourseInput from "./CourseInput";
 import UploadSyllabus from "./UploadSyllabus";
 import { selectCourseState, updateCourseList } from "../features/course/courseSlice";
+import { updateCourse } from "../features/chatbot/chatbotSlice";
 
 interface dialogProperties {
     open: boolean;
@@ -92,7 +93,10 @@ function EditDialog({ open, course, handleClose }: dialogProperties) {
                         if (typeof response === "string") {
                             setError(response);
                         } else {
-                            dispatch(updateCourseList(courseState.courseList.map((course: CourseInfo) => response._id === course._id ? response : course)));
+                            if (userState.user) {
+                                dispatch(updateCourseList({courses: courseState.courseList.map((course: CourseInfo) => response._id === course._id ? response : course), userId: userState.user._id}));
+                            }
+                            dispatch(updateCourse(response));
                             escape();
                         }
                         setIsEditing(false);

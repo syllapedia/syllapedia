@@ -124,7 +124,9 @@ function CourseSearch() {
                                     />
                                     <IconButton disableTouchRipple onClick={() => {
                                             setFoundCourses(foundCourses.filter(foundCourse => foundCourse._id !== course._id));
-                                            dispatch(updateCourseList(courseState.courseList.concat(course)));
+                                            if (userState.user){
+                                                dispatch(updateCourseList({courses: courseState.courseList.concat(course), userId: userState.user?._id}));
+                                            }
                                             save(course._id);
                                         }
                                     }>

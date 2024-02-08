@@ -59,7 +59,9 @@ function SavedCourses() {
 
     const removeCourse = (courseId: string) => {
         const newCourses = courseState.courseList.filter(course => course._id !== courseId);
-        dispatch(updateCourseList(newCourses));
+        if (userState.user) {
+            dispatch(updateCourseList({courses: newCourses, userId: userState.user._id}));
+        }
         if (chatbotState.course && courseId === chatbotState.course._id)  {
             if (newCourses.length > 0)    {
                 dispatch(updateCourse(newCourses[0]));
@@ -81,19 +83,7 @@ function SavedCourses() {
                 </div>     
             : 
                 (courseState.courseList.length ? 
-                    [...courseState.courseList].sort((a, b) => {
-                        if ((a.instructor._id === userState.user?._id) === (b.instructor._id === userState.user?._id)) {
-                            if (a.subject === b.subject) {
-                                if (a.number === b.number) {
-                                    return a.instructor.name.localeCompare(b.instructor.name);
-                                }
-                                return a.number.localeCompare(b.number);
-                            }
-                            return a.subject.localeCompare(b.subject);
-                        }
-                        return a.instructor._id === userState.user?._id ? -1 : 1;
-                    })
-                    .map(course => (
+                    courseState.courseList.map(course => (
                         <ListItem key={course.name} disablePadding>
                             <ListItemButton 
                                 disableTouchRipple 
