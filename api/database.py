@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from authorization import env_keys
 
-client = MongoClient("mongodb+srv://apalabiyik:k1egQDy4x1GQHU0k@smartsyllabus.sxp4blm.mongodb.net/")
+client = MongoClient(env_keys["MONGODB_KEY"])
 db = client["db"]
