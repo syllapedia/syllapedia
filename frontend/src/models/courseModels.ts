@@ -15,14 +15,14 @@ export interface createCourseInfo {
     subject: string,
     number: string,
     title: string,
-    syllabus: string
+    syllabus: NewSyllabus
 }
 
 export interface setCourseInfo {
     subject?: string,
     number?: string,
     title?: string,
-    syllabus?: string
+    syllabus?: NewSyllabus
 }
 
 
@@ -439,8 +439,12 @@ export interface Instructor {
     email: string;
 }
 
+export interface NewSyllabus {
+    base64: string;
+    fileType: string;
+}
+
 export interface Syllabus {
-    original: string; 
     pdf: string;
     txt: string;
 }
