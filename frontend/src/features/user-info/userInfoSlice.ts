@@ -13,7 +13,7 @@ export interface UserState {
 const initialState: UserState = {
   user: null,
   userCredential: "",
-  status: "loading",
+  status: "idle",
 }
 
 export const selectUserState = (state: RootState) => state.userState;
@@ -21,9 +21,9 @@ export const loadUser = createAsyncThunk(
   "userInfo/loadUser", 
   async ({ info, credential }: { info: JWTUserInfo, credential: string}, { dispatch }) => {
     return await getUser(info.sub, credential)
-      .catch(() => createUser({ _id: info.sub, name: info.name!, email: info.email!, permission: info.permission! }, credential))
-      .then(user => {
-        dispatch(loadCourses({ userId: user._id, userCredential: credential }));
+      .catch(async () => await createUser({ _id: info.sub, name: info.name!, email: info.email!, permission: info.permission! }, credential))
+      .then(async user => {
+        await dispatch(loadCourses({ userId: user._id, userCredential: credential }));
         return user;
       });
   }

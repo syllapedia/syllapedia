@@ -6,6 +6,7 @@ import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { JWTUserInfo } from "../models/userModels";
 import { Navigate } from "react-router-dom";
+import { CircularProgress } from "@mui/material";
 
 function LoginPage() {
     const dispatch = useAppDispatch();
@@ -52,7 +53,12 @@ function LoginPage() {
                     { user.status === 'failed' ? "Connection Error" : errorMessage }
                 </div>
                 <div className="login-button-container">
-                    <GoogleLogin onSuccess={handleSuccess} onError={handleError} width={200}/>
+                    { 
+                        user.status !== 'loading' ?
+                            <GoogleLogin onSuccess={handleSuccess} onError={handleError} width={200}/> 
+                        :
+                            <CircularProgress color="primary" />
+                    }
                 </div>
             </div>
         </div>
