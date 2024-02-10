@@ -3,6 +3,7 @@ import base64
 from database import db
 from bson.objectid import ObjectId
 from user_functions import add_new_course
+from xhtml2pdf import pisa
 from pdfminer.high_level import extract_text
 import io
 
@@ -25,9 +26,37 @@ def sanitize_course(course):
     course["_id"] = str(course["_id"])
     return course
 
-def new_syllabus(original):
+def html_to_pdf(html_base64):
+    # Decodes the base64 HTML input to get the HTML string
+    html_bytes = base64.b64decode(html_base64)
+    html_string = html_bytes.decode('utf-8')
+
+    # Create a BytesIO object to capture the PDF output
+    output = io.BytesIO()
+    
+    # Converts HTML to PDF
+    pisa_status = pisa.CreatePDF(html_string, dest=output)
+    
+    # Checks if there was an error converting HTML to PDF
+    if pisa_status.err:
+        raise Exception("Error converting HTML to PDF")
+    
+    # Gets the PDF bytes
+    pdf_bytes = output.getvalue()
+    
+    # Encodes the PDF output as base64
+    pdf_base64 = base64.b64encode(pdf_bytes).decode('utf-8')
+    
+    return pdf_base64
+    
+def new_syllabus(original64, file_type):
     # Converts original into a pdf
-    pdf = original
+    if file_type == "application/pdf":
+        pdf = original64
+    elif file_type == "text/html":
+        pdf = html_to_pdf(original64)
+    else:
+        raise ValueError("Unsupported file type. Please provide a '.pdf' or '.html' file.")
 
     # Converts pdf to a string of text
     pdf_data = base64.b64decode(pdf)
@@ -35,7 +64,6 @@ def new_syllabus(original):
 
     # Returns syllabi
     return {
-        "original": original,
         "pdf": pdf,
         "txt": txt
     }
@@ -65,7 +93,7 @@ def new_course(user_id, subject, number, title, syllabus):
             "number": number,
             "title": title,
             "instructor": {"_id": instructor["_id"], "name": instructor["name"], "email": instructor["email"]},
-            "syllabus": new_syllabus(syllabus)
+            "syllabus": new_syllabus(syllabus["base64"], syllabus["fileType"])
         }
         courses.insert_one(new_course)
 
@@ -110,7 +138,7 @@ def set_course(course_id, data):
                 update_data[key] = value
                 course[key] = value
             else:
-                update_data[key] = new_syllabus(value)
+                update_data[key] = new_syllabus(value["base64"], value["fileType"])
 
         # Updates name if necessary
         if not set(data.keys()).isdisjoint(["subject", "number", "title"]):

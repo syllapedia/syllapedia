@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import "./UploadSyllabus.css"
 import { Button, useTheme } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
+import { NewSyllabus } from "../models/courseModels";
 
 interface uploadSyllabusProperties {
-    syllabus: string;
-    handleSyllabus: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    syllabus: NewSyllabus;
+    handleSyllabus: (file: File | null) => void;
     size: "small" | "medium";
     disabled?: boolean;
 }
@@ -14,16 +15,16 @@ function UploadSyllabus({syllabus, handleSyllabus, size, disabled=false}: upload
     const theme = useTheme()
     const [file, setFile] = useState<File | null>(null);
     useEffect(() => {
-        if (syllabus) {
+        if (syllabus.base64) {
             const fetchFile = async () => {
-                const base64Response = await fetch(`data:application/pdf;base64,${syllabus}`);
+                const base64Response = await fetch(`data:application/pdf;base64,${syllabus.base64}`);
                 const blob = await base64Response.blob();
-                const newFile = new File([blob], "syllabus.pdf", { type: "application/pdf" });
+                const newFile = new File([blob], file ? file.name : "syllabus.pdf", { type: syllabus.fileType });
                 setFile(newFile);
             };
             fetchFile();
         }
-    }, [syllabus]);
+    }, [syllabus.base64]);
     const openFile = () => {
         if (file) {
             const fileURL = URL.createObjectURL(file);
@@ -44,15 +45,20 @@ function UploadSyllabus({syllabus, handleSyllabus, size, disabled=false}: upload
                 Upload Syllabus
                 <input
                     type="file"
-                    onChange={(event) => {handleSyllabus(event);}}
+                    onChange={(event) => {
+                        if (event.currentTarget.files)    {
+                            handleSyllabus(event.currentTarget.files[0]);
+                            setFile(event.currentTarget.files[0]);
+                        }
+                    }}
                     hidden
-                    accept="application/pdf"
+                    accept="application/pdf, text/html"
                 />
             </Button>
-            {syllabus && 
+            {syllabus.base64 && 
                 <div 
                     onClick={() => openFile()} 
-                    style={{ color: theme.palette.info.light }}
+                    style={{ color: theme.palette.info.light, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "160px" }}
                     className="file-text"
                 >
                     {file ? file.name : ""}

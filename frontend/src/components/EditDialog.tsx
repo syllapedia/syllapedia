@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { selectUserState } from "../features/user-info/userInfoSlice";
-import { CourseInfo, setCourseInfo } from "../models/courseModels";
+import { CourseInfo, NewSyllabus, setCourseInfo } from "../models/courseModels";
 import { setCourse } from "../services/httpService";
 import { subjectToCode, codeToSubject } from "../models/courseModels";
 import "./EditDialog.css";
@@ -27,7 +27,7 @@ function EditDialog({ open, course, handleClose }: dialogProperties) {
 
     const [isEditing, setIsEditing] = useState(false);
     const [courseProperties, setCourseProperties] = useState({subject:course.subject, number:course.number, title:course.title});
-    const [syllabus, setSyllabus] = useState(course.syllabus.pdf);
+    const [syllabus, setSyllabus] = useState<NewSyllabus>({base64: course.syllabus.pdf, fileType: "application/pdf"});
     const [error, setError] = useState("");
 
     const coursePropertiesHandler = (key: "subject" | "number" | "title") => {
@@ -40,24 +40,27 @@ function EditDialog({ open, course, handleClose }: dialogProperties) {
         };
     };
     const resetCourseProperties = () => setCourseProperties({subject:course.subject, number:course.number, title:course.title});
-	const handleSyllabus = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files !== null) {
-            const file = event.target.files[0];
+	const handleSyllabus = (file: File | null) => {
+        if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
                 const base64String = (reader.result as string).split(",")[1];
-                setSyllabus(base64String);
+                setSyllabus({base64: base64String, fileType: file.type});
+            };
+            reader.onerror = (error) => {
+                console.error("Error reading file:", error);
+                setSyllabus({base64: "", fileType: ""});
             };
             reader.readAsDataURL(file);
         } else {
-            setSyllabus("");
+            setSyllabus({base64: "", fileType: ""});
         }
     };
     const escape = () => {
         if (!isEditing) {
             handleClose();
             resetCourseProperties();
-            setSyllabus("");
+            setSyllabus({base64: "", fileType: ""});
             setError("");
         }
     };
@@ -68,7 +71,7 @@ function EditDialog({ open, course, handleClose }: dialogProperties) {
             setError("Please enter the course number");
         } else if (courseProperties.title === "") {
             setError("Please enter the course title");
-        } else if (syllabus === "") {
+        } else if (syllabus.base64 === "") {
             setError("Please upload the course syllabus");
         } else {
             let changes: setCourseInfo = {};
@@ -81,12 +84,16 @@ function EditDialog({ open, course, handleClose }: dialogProperties) {
             if (courseProperties.title !== course.title) {
                 changes.title = courseProperties.title;
             }
-            if (syllabus !== course.syllabus.pdf) {
+            if (syllabus.base64 !== course.syllabus.pdf) {
                 changes.syllabus = syllabus;
             }
             if (Object.keys(changes).length === 0) {
                 setError("Please make a change to edit the course");
+            } 
+            else if (!["application/pdf", "text/html"].includes(syllabus.fileType))    {
+                setError("The syllabus must be a pdf or html document");
             } else if (userState.user) {
+                setError("");
                 setIsEditing(true);
                 setCourse(course._id, changes, userState.userCredential)
                     .then(response => {
