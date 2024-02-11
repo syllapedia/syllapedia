@@ -1,9 +1,9 @@
-import { CourseInfo } from "../models/courseModels";
+import { CourseInfo, setCourseInfo } from "../models/courseModels";
 import { useState } from "react";
 import { useTheme } from '@mui/material/styles';
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { selectUserState } from "../features/user-info/userInfoSlice";
-import { removeUserCourse } from "../services/httpService";
+import { deleteCourse, removeUserCourse, setCourse } from "../services/httpService";
 import "./Sidebar.css"
 import "./SavedCourses.css";
 import { Typography, List, ListItem, ListItemButton, ListItemText, IconButton, CircularProgress, Menu, MenuItem } from '@mui/material';
@@ -11,11 +11,10 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import Create from '@mui/icons-material/Create'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import EditDialog from "./EditDialog";
-import DeleteDialog from "./DeleteDialog";
 import { selectCourseState, updateCourseList } from "../features/course/courseSlice";
 import { selectChatbotState, updateCourse } from "../features/chatbot/chatbotSlice";
 import SearchIcon from '@mui/icons-material/Search';
+import CourseDialog from "./CourseDialog";
 
 enum Action { EDIT='edit', DELETE='delete' };
 type DialogState = { [action in Action]: { isOpen: boolean, course: CourseInfo | null } };
@@ -57,7 +56,17 @@ function SavedCourses() {
         }
     }
 
-    const removeCourse = (courseId: string) => {
+    const editCourse = (courseId: string, userCredential: string) => (changes: setCourseInfo) => {
+        return setCourse(courseId, changes, userCredential)
+            .then(response => {
+                if (userState.user) {
+                    dispatch(updateCourseList({courses: courseState.courseList.map((course: CourseInfo) => response._id === course._id ? response : course), userId: userState.user._id}));
+                }
+                dispatch(updateCourse(response));
+            });
+    }
+
+    const removeCourse = (courseId: string) => () => {
         const newCourses = courseState.courseList.filter(course => course._id !== courseId);
         if (userState.user) {
             dispatch(updateCourseList({courses: newCourses, userId: userState.user._id}));
@@ -69,8 +78,42 @@ function SavedCourses() {
                 dispatch(updateCourse(null));
             }
         }
-        removeUserCourse(userState.user!._id, courseId, userState.userCredential);
+        
+        return Promise.allSettled([removeUserCourse(userState.user!._id, courseId, userState.userCredential), deleteCourse(courseId, userState.userCredential)]);
     };
+
+    const editErrorHandler = (course: CourseInfo) => (courseProperties: setCourseInfo) => {
+        if (courseProperties.subject === "") {
+            return "Please select the course subject";
+        } else if (courseProperties.number === "") {
+            return "Please enter the course number";
+        } else if (courseProperties.title === "") {
+            return "Please enter the course name";
+        } else if (!courseProperties.syllabus || courseProperties.syllabus.base64 === "") {
+            return "Please upload the course syllabus";
+        } else if (!courseProperties.syllabus || !["application/pdf", "text/html"].includes(courseProperties.syllabus.fileType))    {
+            return "The syllabus must be a pdf or html document";
+        } else {
+            const changes: setCourseInfo = {};
+            if (courseProperties.subject !== course.subject) {
+                changes.subject = courseProperties.subject;
+            }
+            if (courseProperties.number !== course.number) {
+                changes.number = courseProperties.number;
+            }
+            if (courseProperties.title !== course.title) {
+                changes.title = courseProperties.title;
+            }
+            if (courseProperties.syllabus.base64 !== course.syllabus.pdf) {
+                changes.syllabus = courseProperties.syllabus;
+            }
+            if (Object.keys(changes).length === 0) {
+                return "Please make a change to edit the course";
+            } else {
+                return "";
+            }
+        }
+    }
 
     const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => setAnchorElement(event.currentTarget);
     const handleMenuClose = () => setAnchorElement(null);
@@ -166,19 +209,27 @@ function SavedCourses() {
                 )
             }
             { dialogState[Action.EDIT].isOpen && dialogState[Action.EDIT].course &&
-                <EditDialog 
+                <CourseDialog 
                     open={dialogState[Action.EDIT].isOpen}
-                    course={dialogState[Action.EDIT].course} 
+                    title={"Edit Course"}
+                    actionTitle={"Save"}
+                    course={dialogState[Action.EDIT].course}
+                    courseOptions={true}
+                    errorHandler={editErrorHandler(dialogState[Action.EDIT].course)}
+                    actionHandler={editCourse(dialogState[Action.EDIT].course?._id as string, userState.userCredential)}
                     handleClose={handleDialog(Action.EDIT).close}
                 />
             }
 
             { dialogState[Action.DELETE].isOpen && dialogState[Action.DELETE].course &&
-                <DeleteDialog 
+                <CourseDialog 
                     open={dialogState[Action.DELETE].isOpen}
+                    title={"Delete Course"}
+                    actionTitle={"Delete"}
+                    text={"Are you sure you want to delete this course? This action cannot be undone. Please confirm."}
                     course={dialogState[Action.DELETE].course}  
+                    actionHandler={removeCourse(dialogState[Action.DELETE].course?._id as string)}
                     handleClose={handleDialog(Action.DELETE).close}
-                    remove={removeCourse}
                 />
             }
         </List>
