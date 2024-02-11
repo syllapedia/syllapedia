@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { selectUserState } from "../features/user-info/userInfoSlice";
 import { addUserCourse, userSearchCourses } from "../services/httpService";
@@ -13,7 +13,6 @@ import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import { CourseInfo, subjectToCode } from "../models/courseModels";
 import { courseQuery } from "../models/courseModels";
 import { selectCourseState, updateCourseList } from "../features/course/courseSlice";
-import { selectChatbotState, updateCourse } from "../features/chatbot/chatbotSlice";
 
 function CourseSearch() {    
     const theme = useTheme()
@@ -22,29 +21,21 @@ function CourseSearch() {
     
     const userState = useAppSelector(selectUserState);
     const courseState = useAppSelector(selectCourseState);
-    const chatbotState = useAppSelector(selectChatbotState)
 
     const [courseProperties, setCourseProperties] = useState<courseQuery>({subject:"", number:"", title:""});
     const [foundCourses, setFoundCourses] = useState<CourseInfo[]>([]);
     const [coursesStatus, setCoursesStatus] = useState<"loading" | "success" | "failed" | "">("")
     const [error, setError] = useState("");
 
-    const handleKeyPress = (e: React.KeyboardEvent) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            search();
-        }
-    };
+    const coursePropertiesHandler = useCallback((key: "subject" | "number" | "title") => (value: string | null) => {
+        setCourseProperties(prevState => ({...prevState, [key]: value || ""}));
+    }, []);
 
-    const coursePropertiesHandler = (key: "subject" | "number" | "title") => {
-        return (value: string | null) => {
-            setCourseProperties(prevState => ({...prevState, [key]: value ? value : ""}));
-        };
-    };
-    const search = () => {
-        if (Object.values(courseProperties).filter(x => x).length < 2) {
+    const search = useCallback(() => {
+        if (Object.values(courseProperties).filter(Boolean).length < 2) {
             setCoursesStatus("");
-            setError("Please refine your search")
+            setError("Please refine your search");
+            return;
         }
         else if (userState && userState.user) {
             setCoursesStatus("loading");
@@ -63,17 +54,20 @@ function CourseSearch() {
                     setFoundCourses(fetchedCourses);
                     setCoursesStatus("success");
                 })
-                .catch(error => {
-                    console.error("Error fetching courses:", error);
+                .catch(err => {
+                    console.error("Error fetching courses:", err);
                     setCoursesStatus("failed");
                 });
         }
-    };
-    const save = (courseId: string) => {
-        if (userState.user) {
-            addUserCourse(userState.user._id, {course_id: courseId}, userState.userCredential);
+    }, [courseProperties, userState]);
+
+    const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            search();
         }
-    };
+    }, [search]);
+    
     return (
         <div className="tab-content" onKeyDown={handleKeyPress}>
             <Grid container spacing={1} className="search-components">
@@ -85,64 +79,54 @@ function CourseSearch() {
                 </Grid>
                 <Grid item xs style={{display:"flex"}}>
                     <CourseInput handleInput={coursePropertiesHandler("title")} size="small" label="Name"/>
-                    <IconButton size="medium" onClick={search} disabled={coursesStatus === "loading"} className="search-button" style={{ color: "#e5e5e5", backgroundColor: coursesStatus === "loading" ? theme.palette.primary.dark : theme.palette.primary.main }}>
-                        <SearchIcon />
-                    </IconButton>            
+                    <IconButton size="medium" onClick={search} disabled={coursesStatus === "loading"} className="search-button" style={{color: "#e5e5e5", backgroundColor: coursesStatus === "loading" ? theme.palette.primary.dark : theme.palette.primary.main}}><SearchIcon /></IconButton>         
                 </Grid>
             </Grid>
-            {coursesStatus === "loading" ? 
-                <div style={{display: "flex", justifyContent: "center", alignItems: "center", height:"100%"}}>
-                    <CircularProgress color="primary" />
-                </div> :
-                    coursesStatus === "success" ? foundCourses.length ?
-                    <List disablePadding>
-                        {
-                        foundCourses.map(course => (
-                            <ListItem key={course.name} disablePadding>
-                                <ListItemButton 
-                                    disableRipple 
-                                    className="course"
-                                >
-                                <ListItemText
-                                        primary={
-                                            <>
-                                                <span>{course.subject + " " + course.number + " -"}</span>
-                                                <br/>
-                                                <span>
-                                                    {course.title}
-                                                </span>
-                                            </>
-                                        }
-                                        primaryTypographyProps={{ 
-                                            style: {
-                                                lineClamp: 2,
-                                                overflow: "hidden",
-                                                textOverflow: "ellipsis"
+            {coursesStatus === "loading" 
+                ? <div className="progress"><CircularProgress color="primary"/></div>
+                : coursesStatus === "success" 
+                    ? foundCourses.length 
+                        ? <List disablePadding> {
+                            foundCourses.map(course => (
+                                <ListItem key={course.name} disablePadding>
+                                    <ListItemButton 
+                                        disableRipple 
+                                        className="course"
+                                    >
+                                    <ListItemText
+                                            primary={
+                                                <>
+                                                    <span>{course.subject + " " + course.number + " -"}</span>
+                                                    <br/>
+                                                    <span>
+                                                        {course.title}
+                                                    </span>
+                                                </>
                                             }
-                                        }}
-                                        secondary={"By " + course.instructor.name}
-                                    />
-                                    <IconButton disableTouchRipple onClick={() => {
-                                            setFoundCourses(foundCourses.filter(foundCourse => foundCourse._id !== course._id));
-                                            if (userState.user){
-                                                dispatch(updateCourseList({courses: courseState.courseList.concat(course), userId: userState.user?._id}));
+                                            primaryTypographyProps={{ 
+                                                style: {
+                                                    lineClamp: 2,
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis"
+                                                }
+                                            }}
+                                            secondary={"By " + course.instructor.name}
+                                        />
+                                        <IconButton disableTouchRipple onClick={() => {
+                                                setFoundCourses(foundCourses.filter(foundCourse => foundCourse._id !== course._id));
+                                                if (userState.user) {
+                                                    dispatch(updateCourseList({courses: courseState.courseList.concat(course), userId: userState.user?._id}));
+                                                    addUserCourse(userState.user._id, {course_id: course._id}, userState.userCredential);
+                                                }
                                             }
-                                            save(course._id);
-                                        }
-                                    }>
-                                        <BookmarkBorderIcon></BookmarkBorderIcon>
-                                    </IconButton>
-                                </ListItemButton>
-                            </ListItem>
-                        ))}
-                    </List> :
-                    <Typography variant="body2" color={theme.palette.text.secondary} style={{paddingLeft: "8px", paddingRight: "8px"}}>
-                        Can't find your course? It may not be uploaded by the instructor yet. Try contacting them to request adding the course.
-                    </Typography>
-                :
-                <Typography variant="body2" color={theme.palette.primary.dark} style={{paddingLeft: "8px", paddingRight: "8px"}}>
-                    {error}
-                </Typography>
+                                        }>
+                                            <BookmarkBorderIcon />
+                                        </IconButton>
+                                    </ListItemButton>
+                                </ListItem>
+                            ))}</List>
+                        : <Typography variant="body2" color={theme.palette.text.secondary} className="search-text"> Can't find your course? It may not be uploaded by the instructor yet. Try contacting them to request adding the course.</Typography>
+                    : <Typography variant="body2" color={theme.palette.primary.dark} className="search-text">{error}</Typography>
             }
         </div>
     );    

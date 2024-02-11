@@ -6,3 +6,14 @@
     margin-left: 8px; 
     border-radius: 5px;
 }
+
+.search-text {
+    padding: 0px 8px 0px 8px;
+}
+
+.progress {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
