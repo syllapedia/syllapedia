@@ -1,5 +1,5 @@
+import "./CourseSearch.css";
 import { subjectToCode } from "../models/courseModels";
-import "./CourseSearch.css"
 import { TextField, Autocomplete } from '@mui/material';
 
 function SubjectDropdown({handleSubject, size, defaultValue}: {handleSubject: (value: string | null) => void, size: "small" | "medium", defaultValue?: string}) {

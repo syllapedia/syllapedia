@@ -1,21 +1,22 @@
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { selectUserState } from "../features/user-info/userInfoSlice";
+import { selectCourseState, updateCourseList } from "../features/course/courseSlice";
+import { selectChatbotState, updateCourse } from "../features/chatbot/chatbotSlice";
+import { createCourse } from "../services/httpService";
+import { setCourseInfo } from "../models/courseModels";
 import "./Sidebar.css";
 import { Divider, Drawer, List, Collapse } from '@mui/material';
 import CourseSearch from "./CourseSearch";
-import CreateDialog from "./CreateDialog";
 import MenuTab from "./MenuTab";
 import SavedTab from "./SavedTab";
 import SavedCourses from "./SavedCourses";
 import FindTab from "./FindTab";
+import CourseDialog from "./CourseDialog";
 import CreateTab from "./CreateTab";
-import { selectUserState } from "../features/user-info/userInfoSlice";
-import { selectCourseState } from "../features/course/courseSlice";
-import { selectChatbotState, updateCourse } from "../features/chatbot/chatbotSlice";
 
 function Sidebar() {
-    const user = useAppSelector(selectUserState);
-    const chatbotState = useAppSelector(selectChatbotState);
+    const userState = useAppSelector(selectUserState);
     const courseState = useAppSelector(selectCourseState);
 
     const dispatch = useAppDispatch();
@@ -27,36 +28,63 @@ function Sidebar() {
     useEffect(() => {
         const dark = document.documentElement.style;
         const light = document.querySelector(".light-theme") as HTMLElement;
-        if (user!.user!.permission === "admin" || user!.user!.permission === "instructor") {
+        if (userState!.user!.permission === "admin" || userState!.user!.permission === "instructor") {
             dark.setProperty("--num-tabs", "4");
             if (light)
                 light.style.setProperty("--num-tabs", "4");
         }
     }, []);
 
-    const handleDialog = (open: boolean) => setDialogOpen(open);
-
     const handleDrawerToggle = () => {
         setDrawerOpen(!drawerOpen);
         setSelectedTab("saved");
     }
 
-    const handleSavedClick = () => {
-        setSelectedTab("saved");
-        if (!chatbotState.course)  {
-            dispatch(updateCourse(courseState.courseList[0]));
-        }
-        setDrawerOpen(true);
-    };
-    
-    const handleFindClick = () => {
-        setSelectedTab("find");
+    const handleTabClick = (type: "saved" | "find") => () => {
+        setSelectedTab(type);
         setDrawerOpen(true);
     };
 
+    const newCourse = (userId: string, userCredential: string) => (info: {subject:string, number:string, title:string, syllabus: {base64: string, fileType: string}}) => {
+        return createCourse({user_id: userId, ...info}, userCredential)
+            .then(response => {
+                if (userState.user) {
+                    dispatch(updateCourseList({courses: courseState.courseList.concat(response), userId: userState.user._id}));
+                }
+            });
+    }
+
+    const createErrorHandler = (courseProperties: setCourseInfo) => {
+        if (courseProperties.subject === "")    {
+            return "Please select the course subject";
+        }
+        else if (courseProperties.number === "")    {
+            return "Please enter the course number";
+        }
+        else if (courseProperties.title === "")    {
+            return "Please enter the course name";
+        }
+        else if (courseProperties.syllabus?.base64 === "")    {
+            return "Please upload the course syllabus";
+        }
+        else if (!courseProperties.syllabus || !["application/pdf", "text/html"].includes(courseProperties.syllabus.fileType))    {
+            return "The syllabus must be a pdf or html document";
+        } else {
+            return "";
+        }
+    }
+
     return (
         <div className="drawer">
-            <CreateDialog open={dialogOpen} handleDialog={handleDialog}/>
+            <CourseDialog 
+                open={dialogOpen}
+                title={"Create Course"}
+                actionTitle={"Create"}
+                courseOptions={true}
+                errorHandler={createErrorHandler}
+                actionHandler={newCourse(userState.user?._id as string, userState.userCredential)}
+                handleClose={() => setDialogOpen(false)}
+            />
 
             <Drawer
                 className={`drawer-${drawerOpen ? "open" : "closed"}`}
@@ -69,22 +97,22 @@ function Sidebar() {
 
                     <Divider />
 
-                    <SavedTab open={drawerOpen} handleSavedClick={handleSavedClick}/>
-                    {user.user && user.user._id && drawerOpen && 
+                    <SavedTab open={drawerOpen} handleSavedClick={handleTabClick("saved")}/>
+                    {userState.user && userState.user._id && drawerOpen && 
                         <Collapse in={selectedTab === "saved"} timeout={400}> 
                             <SavedCourses />
                         </Collapse>
                     }
                     
-                    <FindTab open={drawerOpen} handleFindClick={handleFindClick}/>
+                    <FindTab open={drawerOpen} handleFindClick={handleTabClick("find")}/>
                     {drawerOpen && 
                         <Collapse in={selectedTab === "find"} timeout={400}>
                             <CourseSearch />
                         </Collapse>
                     }
 
-                    {user.user && (user.user.permission === "instructor" || user.user.permission === "admin") && 
-                        <CreateTab open={drawerOpen} handleCreateDialog={handleDialog} />
+                    {userState.user && (userState.user.permission === "instructor" || userState.user.permission === "admin") && 
+                        <CreateTab open={drawerOpen} handleCreateClick={setDialogOpen}/>
                     }
                 </List>
             </Drawer>
