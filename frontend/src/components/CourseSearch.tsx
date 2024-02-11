@@ -1,18 +1,18 @@
-import { useCallback, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { selectUserState } from "../features/user-info/userInfoSlice";
-import { addUserCourse, userSearchCourses } from "../services/httpService";
+import React, { useCallback, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { useTheme } from '@mui/material/styles';
-import "./Sidebar.css"
-import "./CourseSearch.css";
-import { IconButton, Grid, List, ListItem, ListItemText, ListItemButton, CircularProgress, Typography } from '@mui/material';
-import SubjectDropdown from "./SubjectDropdown";
-import CourseInput from "./CourseInput";
+import { CircularProgress, Grid, IconButton, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import { CourseInfo, subjectToCode } from "../models/courseModels";
-import { courseQuery } from "../models/courseModels";
-import { selectCourseState, updateCourseList } from "../features/course/courseSlice";
+import { selectUserState } from '../features/user-info/userInfoSlice';
+import { selectCourseState, updateCourseList } from '../features/course/courseSlice';
+import { addUserCourse, userSearchCourses } from '../services/httpService';
+import { CourseInfo, courseQuery, subjectToCode } from '../models/courseModels';
+import SubjectDropdown from './SubjectDropdown';
+import CourseInput from './CourseInput';
+import './Sidebar.css';
+import './CourseSearch.css';
+import { selectChatbotState, updateCourse } from '../features/chatbot/chatbotSlice';
 
 function CourseSearch() {    
     const theme = useTheme()
@@ -21,10 +21,10 @@ function CourseSearch() {
     
     const userState = useAppSelector(selectUserState);
     const courseState = useAppSelector(selectCourseState);
+    const chatbotState = useAppSelector(selectChatbotState);
 
     const [courseProperties, setCourseProperties] = useState<courseQuery>({subject:"", number:"", title:""});
-    const [foundCourses, setFoundCourses] = useState<CourseInfo[]>([]);
-    const [coursesStatus, setCoursesStatus] = useState<"loading" | "success" | "failed" | "">("")
+    const [found, setFound] = useState<{courses: CourseInfo[], status: "loading" | "success" | "failed" | ""}>({courses: [], status: ""});
     const [error, setError] = useState("");
 
     const coursePropertiesHandler = useCallback((key: "subject" | "number" | "title") => (value: string | null) => {
@@ -33,12 +33,12 @@ function CourseSearch() {
 
     const search = useCallback(() => {
         if (Object.values(courseProperties).filter(Boolean).length < 2) {
-            setCoursesStatus("");
+            setFound({status: "", courses: found.courses});
             setError("Please refine your search");
             return;
         }
         else if (userState && userState.user) {
-            setCoursesStatus("loading");
+            setFound({status: "loading", courses: found.courses});
             let query: courseQuery = {};
             Object.entries(courseProperties).forEach(([key, value]) => {
                 if (value) {
@@ -51,12 +51,11 @@ function CourseSearch() {
             });
             userSearchCourses(userState.user._id, query, userState.userCredential)
                 .then(fetchedCourses => {
-                    setFoundCourses(fetchedCourses);
-                    setCoursesStatus("success");
+                    setFound({status: "success", courses: fetchedCourses});
                 })
                 .catch(err => {
                     console.error("Error fetching courses:", err);
-                    setCoursesStatus("failed");
+                    setFound({status: "failed", courses: found.courses});
                 });
         }
     }, [courseProperties, userState]);
@@ -79,15 +78,15 @@ function CourseSearch() {
                 </Grid>
                 <Grid item xs style={{display:"flex"}}>
                     <CourseInput handleInput={coursePropertiesHandler("title")} size="small" label="Name"/>
-                    <IconButton size="medium" onClick={search} disabled={coursesStatus === "loading"} className="search-button" style={{color: "#e5e5e5", backgroundColor: coursesStatus === "loading" ? theme.palette.primary.dark : theme.palette.primary.main}}><SearchIcon /></IconButton>         
+                    <IconButton size="medium" onClick={search} disabled={found.status === "loading"} className="search-button" style={{color: "#e5e5e5", backgroundColor: found.status === "loading" ? theme.palette.primary.dark : theme.palette.primary.main}}><SearchIcon /></IconButton>         
                 </Grid>
             </Grid>
-            {coursesStatus === "loading" 
+            {found.status === "loading" 
                 ? <div className="progress"><CircularProgress color="primary"/></div>
-                : coursesStatus === "success" 
-                    ? foundCourses.length 
+                : found.status === "success" 
+                    ? found.courses.length 
                         ? <List disablePadding> {
-                            foundCourses.map(course => (
+                            found.courses.map(course => (
                                 <ListItem key={course.name} disablePadding>
                                     <ListItemButton 
                                         disableRipple 
@@ -113,7 +112,10 @@ function CourseSearch() {
                                             secondary={"By " + course.instructor.name}
                                         />
                                         <IconButton disableTouchRipple onClick={() => {
-                                                setFoundCourses(foundCourses.filter(foundCourse => foundCourse._id !== course._id));
+                                                setFound({status: found.status, courses: found.courses.filter(foundCourse => foundCourse._id !== course._id)});
+                                                if (!chatbotState.course)  {
+                                                    dispatch(updateCourse(course));
+                                                }
                                                 if (userState.user) {
                                                     dispatch(updateCourseList({courses: courseState.courseList.concat(course), userId: userState.user?._id}));
                                                     addUserCourse(userState.user._id, {course_id: course._id}, userState.userCredential);

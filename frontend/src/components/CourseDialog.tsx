@@ -1,12 +1,11 @@
-import { useState } from "react";
-import { CourseInfo, NewSyllabus, createCourseInfo, setCourseInfo } from "../models/courseModels";
-import { subjectToCode, codeToSubject } from "../models/courseModels";
-import "./CourseDialog.css";
+import React, { useState, useCallback } from 'react';
 import { Dialog, DialogContent, DialogTitle, Grid, Button, Divider, LinearProgress, Typography } from '@mui/material';
-import CourseNameView from "./CourseNameView";
-import SubjectDropdown from "./SubjectDropdown";
-import CourseInput from "./CourseInput";
-import UploadSyllabus from "./UploadSyllabus";
+import CourseNameView from './CourseNameView';
+import SubjectDropdown from './SubjectDropdown';
+import CourseInput from './CourseInput';
+import UploadSyllabus from './UploadSyllabus';
+import { CourseInfo, NewSyllabus, createCourseInfo, subjectToCode, codeToSubject } from '../models/courseModels';
+import './CourseDialog.css';
 
 interface dialogProperties {
     open: boolean;
@@ -34,6 +33,7 @@ function CourseDialog({ open, title, actionTitle, text="", course=null, courseOp
     };
     let resetCourseProperties = () => {};
     let handleSyllabus = (file: File | null) => {};
+    const [error, setError] = useState("");
 
     if (courseOptions) {
         defaultCourseProperties = course ? {subject:course.subject, number:course.number, title:course.title, syllabus:{base64: course.syllabus.pdf, fileType: "application/pdf"}} : {subject:"", number:"", title:"", syllabus: {base64: "", fileType: ""}};
@@ -69,7 +69,6 @@ function CourseDialog({ open, title, actionTitle, text="", course=null, courseOp
             }
         };
     }
-    const [error, setError] = useState("");
     const escape = () => {
         if (!actionStarted) {
             handleClose();
@@ -86,7 +85,7 @@ function CourseDialog({ open, title, actionTitle, text="", course=null, courseOp
             } else {
                 setError("");
                 setActionStarted(true);
-                actionHandler(courseProperties).then(() => {setActionStarted(false);handleClose();});
+                actionHandler(courseProperties).then(() => {setActionStarted(false);escape();});
             }
         } else {
             setError("");

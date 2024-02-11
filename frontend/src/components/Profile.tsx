@@ -1,16 +1,16 @@
-import { useDispatch } from 'react-redux';
 import { useContext, useState } from "react";
+import { useDispatch } from 'react-redux';
+import { useNavigate } from "react-router-dom";
+import { googleLogout } from "@react-oauth/google";
 import { useAppSelector } from "../app/hooks";
 import { selectUserState, updateCredential, updateInfo } from "../features/user-info/userInfoSlice";
+import { ColorModeContext } from '../App';
 import "./Profile.css";
-import { Typography, Avatar, Menu, MenuItem, FormControlLabel, IconButton, Switch, ClickAwayListener } from '@mui/material';
+import { Typography, Avatar, Menu, MenuItem, FormControlLabel, Switch } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useNavigate } from "react-router-dom";
-import { googleLogout } from "@react-oauth/google";
-import { ColorModeContext } from '../App';
 
 
 function Profile() {

@@ -1,18 +1,18 @@
-import { CourseInfo, setCourseInfo } from "../models/courseModels";
 import { useState } from "react";
-import { useTheme } from '@mui/material/styles';
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { selectUserState } from "../features/user-info/userInfoSlice";
-import { deleteCourse, removeUserCourse, setCourse } from "../services/httpService";
-import "./Sidebar.css"
-import "./SavedCourses.css";
-import { Typography, List, ListItem, ListItemButton, ListItemText, IconButton, CircularProgress, Menu, MenuItem } from '@mui/material';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import Create from '@mui/icons-material/Create'
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { selectCourseState, updateCourseList } from "../features/course/courseSlice";
 import { selectChatbotState, updateCourse } from "../features/chatbot/chatbotSlice";
+import { CourseInfo, setCourseInfo } from "../models/courseModels";
+import { deleteCourse, removeUserCourse, setCourse } from "../services/httpService";
+import "./Sidebar.css";
+import "./SavedCourses.css";
+import { Typography, List, ListItem, ListItemButton, ListItemText, IconButton, CircularProgress, Menu, MenuItem } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import Create from '@mui/icons-material/Create';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import SearchIcon from '@mui/icons-material/Search';
 import CourseDialog from "./CourseDialog";
 
@@ -66,7 +66,7 @@ function SavedCourses() {
             });
     }
 
-    const removeCourse = (courseId: string) => () => {
+    const removeCourse = (courseId: string) => {
         const newCourses = courseState.courseList.filter(course => course._id !== courseId);
         if (userState.user) {
             dispatch(updateCourseList({courses: newCourses, userId: userState.user._id}));
@@ -78,8 +78,11 @@ function SavedCourses() {
                 dispatch(updateCourse(null));
             }
         }
-        
-        return Promise.allSettled([removeUserCourse(userState.user!._id, courseId, userState.userCredential), deleteCourse(courseId, userState.userCredential)]);
+        return removeUserCourse(userState.user!._id, courseId, userState.userCredential);
+    }
+
+    const delCourse = (courseId: string) => () => {
+        return Promise.allSettled([removeCourse(courseId), deleteCourse(courseId, userState.userCredential)]);
     };
 
     const editErrorHandler = (course: CourseInfo) => (courseProperties: setCourseInfo) => {
@@ -228,7 +231,7 @@ function SavedCourses() {
                     actionTitle={"Delete"}
                     text={"Are you sure you want to delete this course? This action cannot be undone. Please confirm."}
                     course={dialogState[Action.DELETE].course}  
-                    actionHandler={removeCourse(dialogState[Action.DELETE].course?._id as string)}
+                    actionHandler={delCourse(dialogState[Action.DELETE].course?._id as string)}
                     handleClose={handleDialog(Action.DELETE).close}
                 />
             }

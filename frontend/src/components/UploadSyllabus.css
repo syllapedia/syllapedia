@@ -7,6 +7,10 @@
 }
 
 .file-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 140px;
     text-decoration: underline;
     cursor: pointer;
     line-height: 2;

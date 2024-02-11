@@ -1,7 +1,6 @@
-import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import Profile from './Profile';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { IconButton, Typography } from '@mui/material';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import { useTheme } from '@mui/material/styles';

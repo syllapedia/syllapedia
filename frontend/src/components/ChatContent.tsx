@@ -4,7 +4,7 @@ import Typewriter from 'typewriter-effect';
 import { useAppSelector } from "../app/hooks";
 import { selectChatbotState } from "../features/chatbot/chatbotSlice";
 import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
-import { Typography, useTheme } from "@mui/material";
+import { useTheme } from "@mui/material";
 
 enum ChatRole {
     INTRO = 0,

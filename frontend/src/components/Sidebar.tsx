@@ -1,24 +1,22 @@
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { selectUserState } from "../features/user-info/userInfoSlice";
+import { selectCourseState, updateCourseList } from "../features/course/courseSlice";
+import { selectChatbotState, updateCourse } from "../features/chatbot/chatbotSlice";
+import { createCourse } from "../services/httpService";
+import { setCourseInfo } from "../models/courseModels";
 import "./Sidebar.css";
-import { Divider, Drawer, List, Collapse, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import { Divider, Drawer, List, Collapse } from '@mui/material';
 import CourseSearch from "./CourseSearch";
 import MenuTab from "./MenuTab";
 import SavedTab from "./SavedTab";
 import SavedCourses from "./SavedCourses";
 import FindTab from "./FindTab";
-import AddIcon from '@mui/icons-material/Add';
-import { selectUserState } from "../features/user-info/userInfoSlice";
-import { selectCourseState, updateCourseList } from "../features/course/courseSlice";
-import { selectChatbotState, updateCourse } from "../features/chatbot/chatbotSlice";
 import CourseDialog from "./CourseDialog";
-import { createCourse } from "../services/httpService";
-import { CourseInfo, setCourseInfo } from "../models/courseModels";
 import CreateTab from "./CreateTab";
 
 function Sidebar() {
     const userState = useAppSelector(selectUserState);
-    const chatbotState = useAppSelector(selectChatbotState);
     const courseState = useAppSelector(selectCourseState);
 
     const dispatch = useAppDispatch();
@@ -42,16 +40,8 @@ function Sidebar() {
         setSelectedTab("saved");
     }
 
-    const handleSavedClick = () => {
-        setSelectedTab("saved");
-        if (!chatbotState.course)  {
-            dispatch(updateCourse(courseState.courseList[0]));
-        }
-        setDrawerOpen(true);
-    };
-    
-    const handleFindClick = () => {
-        setSelectedTab("find");
+    const handleTabClick = (type: "saved" | "find") => () => {
+        setSelectedTab(type);
         setDrawerOpen(true);
     };
 
@@ -107,14 +97,14 @@ function Sidebar() {
 
                     <Divider />
 
-                    <SavedTab open={drawerOpen} handleSavedClick={handleSavedClick}/>
+                    <SavedTab open={drawerOpen} handleSavedClick={handleTabClick("saved")}/>
                     {userState.user && userState.user._id && drawerOpen && 
                         <Collapse in={selectedTab === "saved"} timeout={400}> 
                             <SavedCourses />
                         </Collapse>
                     }
                     
-                    <FindTab open={drawerOpen} handleFindClick={handleFindClick}/>
+                    <FindTab open={drawerOpen} handleFindClick={handleTabClick("find")}/>
                     {drawerOpen && 
                         <Collapse in={selectedTab === "find"} timeout={400}>
                             <CourseSearch />

@@ -2,13 +2,11 @@ import './MainLayout.css';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAppSelector } from '../app/hooks';
 import { selectUserState } from '../features/user-info/userInfoSlice';
-import { selectChatbotState } from '../features/chatbot/chatbotSlice';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 
 function MainLayout() {
     const userState = useAppSelector(selectUserState);
-    const chatbotState = useAppSelector(selectChatbotState);
     const location = useLocation();
 
     const PageLayout = () => (

@@ -58,7 +58,7 @@ function UploadSyllabus({syllabus, handleSyllabus, size, disabled=false}: upload
             {syllabus.base64 && 
                 <div 
                     onClick={() => openFile()} 
-                    style={{ color: theme.palette.info.light, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "160px" }}
+                    style={{ color: theme.palette.info.light }}
                     className="file-text"
                 >
                     {file ? file.name : ""}
