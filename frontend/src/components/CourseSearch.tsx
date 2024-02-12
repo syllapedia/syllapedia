@@ -5,7 +5,7 @@ import { CircularProgress, Grid, IconButton, List, ListItem, ListItemButton, Lis
 import SearchIcon from '@mui/icons-material/Search';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import { selectUserState } from '../features/user-info/userInfoSlice';
-import { selectCourseState, updateCourseList } from '../features/course/courseSlice';
+import { courseComparator, selectCourseState, updateCourseList } from '../features/course/courseSlice';
 import { addUserCourse, userSearchCourses } from '../services/httpService';
 import { CourseInfo, courseQuery, subjectToCode } from '../models/courseModels';
 import SubjectDropdown from './SubjectDropdown';
@@ -51,7 +51,11 @@ function CourseSearch() {
             });
             userSearchCourses(userState.user._id, query, userState.userCredential)
                 .then(fetchedCourses => {
-                    setFound({status: "success", courses: fetchedCourses});
+                    if (userState.user)
+                        return fetchedCourses.sort(courseComparator(userState.user._id));
+                })
+                .then(sortedCourses => {
+                    setFound({status: "success", courses: sortedCourses});
                 })
                 .catch(err => {
                     console.error("Error fetching courses:", err);
