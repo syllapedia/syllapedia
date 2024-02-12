@@ -1,17 +1,34 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./LoginPage.css";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { loadUser, selectUserState, updateCredential } from "../features/user-info/userInfoSlice";
-import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import { loadUser, selectUserState, updateCredential, updateInfo } from "../features/user-info/userInfoSlice";
+import { CredentialResponse, GoogleLogin, googleLogout } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { JWTUserInfo } from "../models/userModels";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 
 function LoginPage() {
+    const navigate = useNavigate(); 
     const dispatch = useAppDispatch();
     const user = useAppSelector(selectUserState);
     const [errorMessage, setErrorMessage] = useState('');
+
+    useEffect(() => {
+        if (user.userCredential) {
+            const expiration = jwtDecode(user.userCredential).exp;
+            if (expiration) {
+                const logoutTimer = setTimeout(() => {
+                    dispatch(updateInfo(null));
+                    dispatch(updateCredential(""));
+                    googleLogout();
+                    navigate("/login");
+                }, (expiration - Date.now() / 1000) * 1000);
+    
+                return () => clearTimeout(logoutTimer);
+            }
+        }
+    }, [user.userCredential]);
 
     const handleSuccess = (response: CredentialResponse) => {
         if (response.credential) {
