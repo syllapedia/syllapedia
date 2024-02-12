@@ -14,7 +14,7 @@ const initialState: CourseState = {
   status: "loading",
 };
 
-const courseComparator = (userId: string) => (a: CourseInfo, b: CourseInfo) => {
+export const courseComparator = (userId: string) => (a: CourseInfo, b: CourseInfo) => {
   if ((a.instructor._id === userId) === (b.instructor._id === userId)) {
     if (a.subject === b.subject) {
       if (a.number === b.number) {

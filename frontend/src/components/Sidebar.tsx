@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { selectUserState } from "../features/user-info/userInfoSlice";
 import { selectCourseState, updateCourseList } from "../features/course/courseSlice";
-import { selectChatbotState, updateCourse } from "../features/chatbot/chatbotSlice";
 import { createCourse } from "../services/httpService";
 import { setCourseInfo } from "../models/courseModels";
 import "./Sidebar.css";
