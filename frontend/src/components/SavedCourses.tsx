@@ -122,7 +122,7 @@ function SavedCourses() {
     const handleMenuClose = () => setAnchorElement(null);
 
     return (
-        <List disablePadding className="tab-content">
+        <List disablePadding sx={{ "&& .Mui-selected": { backgroundColor: theme.palette.background.default } }} className="tab-content">
             {courseState.status !== "idle" ?  
                 <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height:"100%"}}>
                     <CircularProgress color="primary" />
