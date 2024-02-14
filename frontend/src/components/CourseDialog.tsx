@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Dialog, DialogContent, DialogTitle, Grid, Button, Divider, LinearProgress, Typography } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, Grid, Button, Divider, LinearProgress, Typography, useMediaQuery } from '@mui/material';
 import CourseNameView from './CourseNameView';
 import SubjectDropdown from './SubjectDropdown';
 import CourseInput from './CourseInput';
@@ -21,6 +21,7 @@ interface dialogProperties {
 
 function CourseDialog({ open, title, actionTitle, text="", course=null, courseOptions=false, errorHandler=(c: createCourseInfo) =>  "", actionHandler=() => Promise.resolve(), handleClose=() => {} }: dialogProperties) {
     const [actionStarted, setActionStarted] = useState(false);
+    const isMobile = useMediaQuery('(max-width: 520px)');
 
     let defaultCourseProperties = {subject:"", number:"", title:"", syllabus: {base64: "", fileType: ""}}
     let [courseProperties, setCourseProperties] = useState(defaultCourseProperties);
@@ -98,7 +99,7 @@ function CourseDialog({ open, title, actionTitle, text="", course=null, courseOp
         <Dialog open={open} onClose={escape}>
             <DialogTitle>{title}</DialogTitle>
             {actionStarted ? <LinearProgress style={{marginTop: "-3px"}}/> : <Divider></Divider>}
-            <DialogContent style={{width:"380px"}}>
+            <DialogContent style={{display: "flex", alignSelf: "center", width:(isMobile ? "80%" : "380px")}}>
                 <Grid container spacing={1}>
                     {courseOptions && 
                         <>
@@ -106,13 +107,13 @@ function CourseDialog({ open, title, actionTitle, text="", course=null, courseOp
                                 <CourseNameView courseProperties={courseProperties} />
                             </Grid>
                             <Grid item xs={6}>
-                                <SubjectDropdown handleSubject={coursePropertiesHandler("subject") as (value: string | null) => void} size="medium" defaultValue={courseProperties.subject ? codeToSubject[courseProperties.subject as keyof typeof codeToSubject] : undefined} />
+                                <SubjectDropdown handleSubject={coursePropertiesHandler("subject") as (value: string | null) => void} size={isMobile ? "small" : "medium"} defaultValue={courseProperties.subject ? codeToSubject[courseProperties.subject as keyof typeof codeToSubject] : undefined} />
                             </Grid><Grid item xs={6}>
-                                <CourseInput handleInput={coursePropertiesHandler("number") as (value: string | null) => void} size="medium" label="Number" defaultValue={courseProperties.number ? courseProperties.number : undefined} />
+                                <CourseInput handleInput={coursePropertiesHandler("number") as (value: string | null) => void} size={isMobile ? "small" : "medium"} label="Number" defaultValue={courseProperties.number ? courseProperties.number : undefined} />
                             </Grid><Grid item xs={12}>
-                                <CourseInput handleInput={coursePropertiesHandler("title") as (value: string | null) => void} size="medium" label="Name" defaultValue={courseProperties.title ? courseProperties.title : undefined} />
+                                <CourseInput handleInput={coursePropertiesHandler("title") as (value: string | null) => void} size={isMobile ? "small" : "medium"} label="Name" defaultValue={courseProperties.title ? courseProperties.title : undefined} />
                             </Grid><Grid item xs={12}>
-                                <UploadSyllabus syllabus={courseProperties.syllabus} handleSyllabus={handleSyllabus} size="medium" disabled={actionStarted} />
+                                <UploadSyllabus syllabus={courseProperties.syllabus} handleSyllabus={handleSyllabus} size={isMobile ? "small" : "medium"} disabled={actionStarted} />
                             </Grid>
                         </>
                     }
@@ -126,14 +127,11 @@ function CourseDialog({ open, title, actionTitle, text="", course=null, courseOp
                         : <Grid item xs={12} height={"16px"}></Grid>
 
                     } 
-                    <Grid item xs={6}></Grid>
-                    <Grid item xs={3}>
-                        <Button onClick={escape} size="medium" variant="outlined" color="inherit" disabled={actionStarted}>
+                    <Grid item xs={12} style={{display: "flex", justifyContent: "end"}}>
+                        <Button onClick={escape} size={isMobile ? "small" : "medium"} variant="outlined" color="inherit" disabled={actionStarted}>
                             Cancel
                         </Button>
-                    </Grid>
-                    <Grid item xs={3}>
-                        <Button size="medium" variant="contained" color="primary" onClick={action} disabled={actionStarted} style={{width: "100%"}}>
+                        <Button size={isMobile ? "small" : "medium"} variant="contained" color="primary" onClick={action} disabled={actionStarted} style={{marginLeft: "8px"}}>
                             {actionTitle}
                         </Button>
                     </Grid>

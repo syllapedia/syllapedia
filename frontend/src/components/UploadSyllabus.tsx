@@ -32,7 +32,7 @@ function UploadSyllabus({syllabus, handleSyllabus, size, disabled=false}: upload
         }
     };
     return (
-        <div style={{display:"flex"}}>
+        <div style={{display:"flex", flexDirection: "column"}}>
             <Button
                 variant="contained"
                 size={size}
@@ -40,7 +40,7 @@ function UploadSyllabus({syllabus, handleSyllabus, size, disabled=false}: upload
                 color="primary"
                 disabled={disabled}
                 startIcon={<UploadIcon />}
-                className="upload-button"
+                className="upload"
             >
                 Upload Syllabus
                 <input

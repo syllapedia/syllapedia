@@ -1,13 +1,19 @@
 .profile {
     display: flex;
     cursor: pointer;
-    width: var(--profile-width);
 }
 
 .avatar {
     padding: 4px;
     margin-right: 10px;
     font-size: 18px;
+}
+
+.arrow {
+    margin: 0;
+    padding: 0;
+    transform: translateY(50%);
+    color: var(--text-primary);
 }
 
 .profile-text {

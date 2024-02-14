@@ -10,6 +10,17 @@
     flex: 1;
     height: 100dvh;
 }
+  
+@media (max-width: 520px) {
+    .inner-layout-container {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        height: 100dvh;
+        padding-left: var(--drawer-width-closed);
+        position: absolute;
+    }
+  }
 
 .course.MuiListItemButton-root {
     width: 100%; 
@@ -18,16 +29,6 @@
     border-radius: 10px; 
     display: flexbox; 
     white-space: nowrap;
-}
-
-.course-selected.MuiListItemButton-root {
-    width: 100%; 
-    margin-left: 8px; 
-    margin-right: 8px; 
-    border-radius: 10px; 
-    display: flexbox; 
-    white-space: nowrap;
-    background-color: var(--background-default);
 }
 
 ::-webkit-scrollbar-track {
