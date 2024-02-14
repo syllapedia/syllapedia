@@ -42,6 +42,6 @@ html, body, #root, .drawer {
 .tab-content {
     display: flex;
     flex-direction: column;
-    height: calc(100dvh - var(--num-tabs) * var(--tab-height) - var(--divider-height) * 2);
+    height: calc(100dvh - var(--num-tabs) * var(--tab-height) - var(--divider-height) * 3);
     overflow-y: auto;
 }

@@ -1,18 +1,17 @@
-.upload-button.MuiButtonBase-root {
-    width: 55%;
+.upload.MuiButtonBase-root {
+    width: 100%;
 }
 
-.file-button.MuiButtonBase-root {
-    width: 45%;
+.file-text.MuiButtonBase-root {
+    width: 100%;
 }
 
 .file-text {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 140px;
+    max-width: 100%;
     text-decoration: underline;
     cursor: pointer;
     line-height: 2;
-    margin-left: 15px;
 }

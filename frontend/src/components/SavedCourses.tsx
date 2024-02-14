@@ -134,9 +134,8 @@ function SavedCourses() {
                             <ListItemButton 
                                 disableTouchRipple 
                                 onClick={() => dispatch(updateCourse(course))}
-                                className={`course${(chatbotState.course && chatbotState.course.name === course.name && chatbotState.course.instructor._id === course.instructor._id)
-                                    ? "-selected"
-                                    : ""}`}
+                                selected={Boolean(chatbotState.course && chatbotState.course.name === course.name && chatbotState.course.instructor._id === course.instructor._id)}
+                                className="course"
                             >
                                 <ListItemText
                                     primary={

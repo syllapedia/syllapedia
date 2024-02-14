@@ -18,14 +18,12 @@ function LoginPage() {
         if (user.userCredential) {
             const expiration = jwtDecode(user.userCredential).exp;
             if (expiration) {
-                const logoutTimer = setTimeout(() => {
+                setTimeout(() => {
                     dispatch(updateInfo(null));
                     dispatch(updateCredential(""));
                     googleLogout();
                     navigate("/login");
-                }, (expiration - Date.now() / 1000) * 1000);
-    
-                return () => clearTimeout(logoutTimer);
+                }, expiration * 1000 - Date.now());    
             }
         }
     }, [user.userCredential]);

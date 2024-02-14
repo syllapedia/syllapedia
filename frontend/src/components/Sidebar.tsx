@@ -5,7 +5,7 @@ import { selectCourseState, updateCourseList } from "../features/course/courseSl
 import { createCourse } from "../services/httpService";
 import { setCourseInfo } from "../models/courseModels";
 import "./Sidebar.css";
-import { Divider, Drawer, List, Collapse } from '@mui/material';
+import { Divider, Drawer, List, Collapse, useMediaQuery } from '@mui/material';
 import CourseSearch from "./CourseSearch";
 import MenuTab from "./MenuTab";
 import SavedTab from "./SavedTab";
@@ -21,7 +21,7 @@ function Sidebar() {
     const dispatch = useAppDispatch();
 
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [drawerOpen, setDrawerOpen] = useState(window.innerWidth / window.innerHeight > 1);
+    const [drawerOpen, setDrawerOpen] = useState(!useMediaQuery('(max-width: 520px)'));
     const [selectedTab, setSelectedTab] = useState("saved");
 
     useEffect(() => {
