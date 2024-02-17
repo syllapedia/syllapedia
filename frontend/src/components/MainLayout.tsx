@@ -10,7 +10,7 @@ function MainLayout() {
     const location = useLocation();
 
     const PageLayout = () => (
-        ["/login", "/settings"].reduce((acc, e) => acc && (location.pathname != e), true)  ?
+        ["/", "/settings"].reduce((acc, e) => acc && (location.pathname != e), true)  ?
                 <div className="outer-layout-container">
                     <Sidebar />
                     <div className="inner-layout-container">
@@ -25,8 +25,8 @@ function MainLayout() {
     return (
         <> 
             {
-                location.pathname !== "/login" && (userState.user === null || userState.status === 'failed') ?
-                    <Navigate to="/login" />
+                location.pathname !== "/" && (userState.user === null || userState.status === 'failed') ?
+                    <Navigate to="/" />
                 :
                     <PageLayout />
             }

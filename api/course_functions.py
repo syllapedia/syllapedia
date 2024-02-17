@@ -1,10 +1,11 @@
-from flask import Response, jsonify
+from flask import Response, jsonify, json
+import requests
 import base64
 from database import db
 from bson.objectid import ObjectId
 from user_functions import add_new_course
-from xhtml2pdf import pisa
 from pdfminer.high_level import extract_text
+from authorization import env_keys
 import io
 
 courses = db["Courses"]
@@ -26,23 +27,16 @@ def sanitize_course(course):
     course["_id"] = str(course["_id"])
     return course
 
-def html_to_pdf(html_base64):
-    # Decodes the base64 HTML input to get the HTML string
-    html_bytes = base64.b64decode(html_base64)
-    html_string = html_bytes.decode('utf-8')
-
-    # Create a BytesIO object to capture the PDF output
-    output = io.BytesIO()
-    
-    # Converts HTML to PDF
-    pisa_status = pisa.CreatePDF(html_string, dest=output)
-    
-    # Checks if there was an error converting HTML to PDF
-    if pisa_status.err:
-        raise Exception("Error converting HTML to PDF")
+def to_pdf(file, file_type):
+    # Converts file to PDF
+    api_key = env_keys["API2PDF_KEY"]
+    if file_type == "html":
+        endpoint = "https://v2.api2pdf.com/chrome/pdf/html"
+    api_response = requests.post(endpoint, json={file_type: file}, headers={"Authorization": api_key})
+    response_url = json.loads(api_response.content)["FileUrl"]
     
     # Gets the PDF bytes
-    pdf_bytes = output.getvalue()
+    pdf_bytes = requests.get(response_url).content
     
     # Encodes the PDF output as base64
     pdf_base64 = base64.b64encode(pdf_bytes).decode('utf-8')
@@ -54,7 +48,10 @@ def new_syllabus(original64, file_type):
     if file_type == "application/pdf":
         pdf = original64
     elif file_type == "text/html":
-        pdf = html_to_pdf(original64)
+        # Decodes the base64 HTML input to get the HTML string
+        html_bytes = base64.b64decode(original64)
+        html_string = html_bytes.decode("utf-8")
+        pdf = to_pdf(html_string, "html")
     else:
         raise ValueError("Unsupported file type. Please provide a '.pdf' or '.html' file.")
 

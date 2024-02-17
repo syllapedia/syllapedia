@@ -28,7 +28,7 @@ function SettingsPage() {
             dispatch(updateInfo(null));
             dispatch(updateCredential(""));
             googleLogout();
-            navigate("/login");
+            navigate("/");
         });
     }
 

@@ -26,7 +26,7 @@ function Profile() {
         dispatch(updateInfo(null));
         dispatch(updateCredential(""));
         googleLogout();
-        navigate("/login");
+        navigate("/");
     }
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [openMenu, setMenu] = useState(false)

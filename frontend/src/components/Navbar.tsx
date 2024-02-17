@@ -13,7 +13,7 @@ function Navbar({title}: {title?: string}) {
         <div className="navbar">
             <div>
                 {location.pathname === "/settings" && 
-                    <IconButton size="large" onClick={() => navigate("/")} disableFocusRipple>
+                    <IconButton size="large" onClick={() => navigate("/chat")} disableFocusRipple>
                         <KeyboardReturnIcon></KeyboardReturnIcon>
                     </IconButton>  
                 }

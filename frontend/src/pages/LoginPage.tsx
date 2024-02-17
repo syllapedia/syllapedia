@@ -22,7 +22,7 @@ function LoginPage() {
                     dispatch(updateInfo(null));
                     dispatch(updateCredential(""));
                     googleLogout();
-                    navigate("/login");
+                    navigate("/");
                 }, expiration * 1000 - Date.now());    
             }
         }
@@ -63,7 +63,7 @@ function LoginPage() {
                 </div>
             </div>
             <div className="login-container">
-                { !user.user ? "Log in to your school email..." : <Navigate to="/" />}
+                { !user.user ? "Log in to your school email..." : <Navigate to="/chat" />}
                 <div className="login-error-message">
                     { user.status === 'failed' ? "Connection Error" : errorMessage }
                 </div>
