@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import './ChatContent.css';
 import Typewriter from 'typewriter-effect';
 import { useAppSelector } from "../app/hooks";
@@ -18,12 +18,16 @@ interface AnimatedTextProps {
 
 function ChatContent() {
     const theme = useTheme()
-    const chatbot = useAppSelector(selectChatbotState);  
-    const [currentRole, setCurrentRole] = useState(ChatRole.INTRO);
+    const chatbotState = useAppSelector(selectChatbotState);  
+    const [isTyped, setIsTyped] = useState(false);
+
+    useEffect(() => {
+        setIsTyped(false);
+    }, [chatbotState.course, chatbotState.answer])
 
     const openHighlight = () => {
-        if (chatbot.highlight) {
-            fetch(`data:application/pdf;base64,${chatbot.highlight}`)
+        if (chatbotState.highlight) {
+            fetch(`data:application/pdf;base64,${chatbotState.highlight}`)
                 .then(res => res.blob())
                 .then(blob => {
                 const pdfUrl = URL.createObjectURL(blob);
@@ -38,25 +42,25 @@ function ChatContent() {
 
         switch(role) {
             case ChatRole.INTRO:
-                isAnimated = (chatbot.question === "") && (chatbot.answer === "");
+                isAnimated = (chatbotState.question === "") && (chatbotState.answer === "");
                 break;
             case ChatRole.ANSWER:
-                isAnimated = (chatbot.question !== "") && (chatbot.answer !== "");
+                isAnimated = (chatbotState.question !== "") && (chatbotState.answer !== "");
                 break;
         }
 
-        isAnimated &&= role === currentRole
+        isAnimated &&= !isTyped
 
         return isAnimated ? 
             <Typewriter 
                 options={{ cursor: "|", delay: 0 }} 
                 onInit={(typewriter) => {
                     typewriter.typeString(text).callFunction(() => {
-                        setCurrentRole((currentRole + 1) % 2);
+                        setIsTyped(true);
                     }).start() 
                 }}
             /> 
-        : role === ChatRole.ANSWER && chatbot.status !== 'failed' ? (
+        : role === ChatRole.ANSWER && chatbotState.status !== 'failed' ? (
             <div style={{ margin: 0 }}>
                 { text }
                 <div style={{ display: 'inline-block', position: 'relative' }}>
@@ -79,7 +83,7 @@ function ChatContent() {
     }; 
 
     const ChatbotPending = () => (
-        <div style={{ width: 30 }}>
+        <div style={{ minWidth: 30 }}>
             <Typewriter 
                 options={{ 
                     cursor: "", 
@@ -94,7 +98,7 @@ function ChatContent() {
         </div>
     );
 
-    return (
+    return chatbotState.course ? (
         <div className="chat-content">
             <div className="bot-bubble" style={{backgroundColor: theme.palette.background.default}}>
                 <AnimatedText 
@@ -103,22 +107,22 @@ function ChatContent() {
                 />
             </div>
             {
-                chatbot.question !== "" ? 
+                chatbotState.question !== "" ? 
                     <div className="user-bubble" style={{backgroundColor: theme.palette.primary.main}}>
-                        {chatbot.question} 
+                        {chatbotState.question} 
                     </div> 
                 : 
                     <></>
             }
             {
-                chatbot.answer !== "" ?
+                chatbotState.answer !== "" ?
                     <div className="bot-bubble" style={{backgroundColor: theme.palette.background.default}}>
                         <AnimatedText 
                             role={ChatRole.ANSWER} 
-                            text={chatbot.answer} 
+                            text={chatbotState.answer} 
                         />
                     </div> 
-                : chatbot.answer === "" && chatbot.status === "loading" ? 
+                : chatbotState.answer === "" && chatbotState.status === "loading" ? 
                     <div className="bot-bubble" style={{backgroundColor: theme.palette.background.default}}>
                         <ChatbotPending /> 
                     </div> 
@@ -126,7 +130,7 @@ function ChatContent() {
                     <></>
             }
         </div>
-    );
+    ) : <></>;
 }
 
 export default ChatContent;

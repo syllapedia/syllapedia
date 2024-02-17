@@ -38,8 +38,6 @@ textarea:focus, input:focus{
     padding: 6px 0px;
      
     color: var(--text-primary);
-
-    text-decoration-line: underline;
     cursor: pointer;
 }
 

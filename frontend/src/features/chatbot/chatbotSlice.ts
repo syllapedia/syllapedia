@@ -33,7 +33,8 @@ export const processQuestion = createAsyncThunk(
       courseId: state.chatbotState.course._id,
       question: state.chatbotState.question
     }, state.userState.userCredential)
-    .then(response => response.valid ? response : Promise.reject());
+    .then(response => response.valid ? response : Promise.reject())
+    .catch(error => error.name === "AbortError" ? { answer: "Response Terminated.", highlight: "" } : Promise.reject());
   }
 );
 
@@ -59,7 +60,7 @@ export const chatbotSlice = createSlice({
         state.status = "loading";
       })
       .addCase(processQuestion.fulfilled, (state, data) => {
-        state.status = "idle";
+        state.status = data.payload.highlight ? "idle" : "failed";
         state.answer = data.payload.answer;
         state.highlight = data.payload.highlight;
       })
