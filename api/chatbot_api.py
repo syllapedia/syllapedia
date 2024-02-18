@@ -2,10 +2,12 @@ from flask import request, jsonify
 from apiflask import APIBlueprint
 from chatbot_functions import chat_respond
 from authorization import authorize
+from limiter import limiter, chatbot_limit
 
 chatbot_api = APIBlueprint("chatbot_api", __name__)
 
 @chatbot_api.route("/chat", methods=["POST"])
+@chatbot_limit
 def ask_question():
     def action():
         data = request.get_json()
@@ -15,6 +17,7 @@ def ask_question():
     return authorize(action)
 
 @chatbot_api.route("/chat/debug", methods=["POST"])
+@limiter.exempt
 def debug_chat():
     def action():
         data = request.get_json()
