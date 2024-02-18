@@ -6,6 +6,7 @@ import { createCourse } from "../services/httpService";
 import { setCourseInfo } from "../models/courseModels";
 import "./Sidebar.css";
 import { Divider, Drawer, List, Collapse, useMediaQuery } from '@mui/material';
+import { ClickAwayListener } from '@mui/base';
 import CourseSearch from "./CourseSearch";
 import MenuTab from "./MenuTab";
 import SavedTab from "./SavedTab";
@@ -20,8 +21,10 @@ function Sidebar() {
 
     const dispatch = useAppDispatch();
 
+    const isMobile = useMediaQuery('(max-width: 520px)');
+
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [drawerOpen, setDrawerOpen] = useState(!useMediaQuery('(max-width: 520px)'));
+    const [drawerOpen, setDrawerOpen] = useState(!isMobile);
     const [selectedTab, setSelectedTab] = useState("saved");
 
     useEffect(() => {
@@ -85,36 +88,38 @@ function Sidebar() {
                 handleClose={() => setDialogOpen(false)}
             />
 
-            <Drawer
-                className={`drawer-${drawerOpen ? "open" : "closed"}`}
-                variant="permanent"
-                anchor="left"
-                open={drawerOpen}
-            >
-                <List className={`drawer-${drawerOpen ? "open" : "closed"}`} disablePadding>
-                    <MenuTab open={drawerOpen} handleDrawerToggle={handleDrawerToggle}/>
+            <ClickAwayListener onClickAway={() => setDrawerOpen(isMobile ? false : drawerOpen)}>
+                <Drawer
+                    className={`drawer-${drawerOpen ? "open" : "closed"}`}
+                    variant="permanent"
+                    anchor="left"
+                    open={drawerOpen}
+                >
+                    <List className={`drawer-${drawerOpen ? "open" : "closed"}`} disablePadding>
+                        <MenuTab open={drawerOpen} handleDrawerToggle={handleDrawerToggle}/>
 
-                    <Divider />
+                        <Divider />
 
-                    <SavedTab open={drawerOpen} handleSavedClick={handleTabClick("saved")}/>
-                    {userState.user && userState.user._id && drawerOpen && 
-                        <Collapse in={selectedTab === "saved"} timeout={400}> 
-                            <SavedCourses />
-                        </Collapse>
-                    }
-                    
-                    <FindTab open={drawerOpen} handleFindClick={handleTabClick("find")}/>
-                    {drawerOpen && 
-                        <Collapse in={selectedTab === "find"} timeout={400}>
-                            <CourseSearch />
-                        </Collapse>
-                    }
+                        <SavedTab open={drawerOpen} handleSavedClick={handleTabClick("saved")}/>
+                        {userState.user && userState.user._id && drawerOpen && 
+                            <Collapse in={selectedTab === "saved"} timeout={400}> 
+                                <SavedCourses />
+                            </Collapse>
+                        }
+                        
+                        <FindTab open={drawerOpen} handleFindClick={handleTabClick("find")}/>
+                        {drawerOpen && 
+                            <Collapse in={selectedTab === "find"} timeout={400}>
+                                <CourseSearch />
+                            </Collapse>
+                        }
 
-                    {userState.user && (userState.user.permission === "instructor" || userState.user.permission === "admin") && 
-                        <CreateTab open={drawerOpen} handleCreateClick={setDialogOpen}/>
-                    }
-                </List>
-            </Drawer>
+                        {userState.user && (userState.user.permission === "instructor" || userState.user.permission === "admin") && 
+                            <CreateTab open={drawerOpen} handleCreateClick={setDialogOpen}/>
+                        }
+                    </List>
+                </Drawer>
+            </ClickAwayListener>
         </div>
     );
 }
