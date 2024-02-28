@@ -25,10 +25,10 @@ function UploadSyllabus({syllabus, handleSyllabus, size, disabled=false}: upload
             fetchFile();
         }
     }, [syllabus.base64]);
-    const openFile = () => {
+    const openFile = (window: Window) => {
         if (file) {
             const fileURL = URL.createObjectURL(file);
-            window.open(fileURL, "_blank");
+            window.location.href = fileURL;
         }
     };
     return (
@@ -57,7 +57,12 @@ function UploadSyllabus({syllabus, handleSyllabus, size, disabled=false}: upload
             </Button>
             {syllabus.base64 && 
                 <div 
-                    onClick={() => openFile()} 
+                onClick={() => {
+                    const windowReference = window.open('', '_blank');
+                    if (windowReference) {
+                        openFile(windowReference);
+                    }
+                    }}
                     style={{ color: theme.palette.info.light }}
                     className="file-text"
                 >

@@ -8,13 +8,13 @@ import { useAppSelector } from "../app/hooks";
 function ChatPage() {
     const chatbot = useAppSelector(selectChatbotState);  
 
-    const openSyllabus = () => {
+    const openSyllabus = (window: Window) => {
         if (chatbot.course) {
             fetch(`data:application/pdf;base64,${chatbot.course.syllabus.pdf}`)
                 .then(res => res.blob())
                 .then(blob => {
-                const pdfUrl = URL.createObjectURL(blob);
-                window.open(pdfUrl, '_blank');
+                    const pdfUrl = URL.createObjectURL(blob);
+                    window.location.href = pdfUrl;
                 }
             );
         }
@@ -27,7 +27,14 @@ function ChatPage() {
             </div>
             {
                 chatbot.course ?
-                    <div className="subtitle" onClick={openSyllabus}>
+                    <div 
+                    className="subtitle" 
+                    onClick={() => {
+                        const windowReference = window.open('', '_blank');
+                        if (windowReference) {
+                            openSyllabus(windowReference);
+                        }
+                    }}>
                         View Full Syllabus
                         <OpenInNewIcon style={{ fontSize: 'medium', marginLeft: 5 }} />
                     </div> 
