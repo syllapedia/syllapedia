@@ -25,13 +25,13 @@ function ChatContent() {
         setIsTyped(false);
     }, [chatbotState.course, chatbotState.answer])
 
-    const openHighlight = () => {
+    const openHighlight = (window: Window) => {
         if (chatbotState.highlight) {
             fetch(`data:application/pdf;base64,${chatbotState.highlight}`)
                 .then(res => res.blob())
                 .then(blob => {
-                const pdfUrl = URL.createObjectURL(blob);
-                window.open(pdfUrl, '_blank');
+                    const pdfUrl = URL.createObjectURL(blob);
+                    window.location.href = pdfUrl;
                 }
             );
         }
@@ -75,7 +75,12 @@ function ChatContent() {
                             padding: '2px 3px 2px 2px',
                             cursor: 'pointer' 
                         }}
-                        onClick={openHighlight}
+                        onClick={() => {
+                            const windowReference = window.open('', '_blank');
+                            if (windowReference) {
+                                openHighlight(windowReference);
+                            }
+                        }}
                     />
                 </div>
             </div>
