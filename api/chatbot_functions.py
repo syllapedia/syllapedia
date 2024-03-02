@@ -16,7 +16,7 @@ def chat_respond(course_id, question):
 
   # Gets question answer and the answer's sources
   try:
-    response = openai_chat_respond(question, txt)
+    response = openai_chat_respond(txt, question)
     answer = response["answer"]
   except:
     return Response("Answer failed to complete", 400)

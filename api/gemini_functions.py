@@ -5,11 +5,11 @@ from authorization import env_keys
 
 courses = db["Courses"]
 
-def gemini_chat_respond(question, txt):
-    prompt_parts = [env_keys["GEMINI_ROLE"] + ("Using [%s], answer [%s].\n\n" % (txt, question)) + env_keys["GEMINI_PROMPT"]]
+def gemini_chat_respond(syllabus, query):
+    prompt_parts = [f"Role: {env_keys["LLM_ROLE"]}\n\nInstructions: {env_keys["LLM_INSTRUCTIONS"]}\n\nSyllabus: {syllabus}\n\nQuery: {query}"]
     try:
         # Gets Gemini response
-        genai.configure(api_key=env_keys['GEMINI_KEY'])
+        genai.configure(api_key=env_keys['GOOGLE_API_KEY'])
         model = genai.GenerativeModel(model_name="gemini-pro")
         content = model.generate_content(prompt_parts)
 
