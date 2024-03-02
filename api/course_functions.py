@@ -4,7 +4,7 @@ import base64
 from database import db
 from bson.objectid import ObjectId
 from user_functions import add_new_course
-from pdfminer.high_level import extract_text
+import fitz
 from authorization import env_keys
 import io
 
@@ -57,7 +57,10 @@ def new_syllabus(original64, file_type):
 
     # Converts pdf to a string of text
     pdf_data = base64.b64decode(pdf)
-    txt = extract_text(io.BytesIO(pdf_data))
+    doc = fitz.open(stream=pdf_data, filetype="pdf")
+    txt = ""
+    for page in doc:
+        txt += page.get_text() + "\n"
 
     # Returns syllabi
     return {

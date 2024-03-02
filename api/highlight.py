@@ -1,7 +1,6 @@
 import fitz
 import io
 import base64
-from user_functions import set_user
 
 def highlight_text_in_pdf(base64_pdf, texts_to_highlight):
     # Converts blob into pdf
