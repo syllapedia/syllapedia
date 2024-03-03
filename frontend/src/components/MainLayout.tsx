@@ -10,7 +10,7 @@ function MainLayout() {
     const location = useLocation();
 
     const PageLayout = () => (
-        ["/", "/settings"].reduce((acc, e) => acc && (location.pathname != e), true)  ?
+        ["/", "/settings", "/analytics"].reduce((acc, e) => acc && (location.pathname != e), true)  ?
                 <div className="outer-layout-container">
                     <Sidebar />
                     <div className="inner-layout-container">

@@ -12,19 +12,19 @@ function Navbar({title}: {title?: string}) {
     return (
         <div className="navbar">
             <div>
-                {location.pathname === "/settings" && 
+                {["/settings", "/analytics"].reduce((acc, e) => acc || (location.pathname === e), false) && 
                     <IconButton size="large" onClick={() => navigate("/chat")} disableFocusRipple>
                         <KeyboardReturnIcon></KeyboardReturnIcon>
                     </IconButton>  
                 }
             </div>
             <div>
-                <Typography color={theme.palette.text.primary} className="title">
+                <Typography color={theme.palette.text.primary} variant="h6" className="title">
                     {title ? title : ""}
                 </Typography>
             </div>
             <div>
-                {location.pathname !== "/settings" && 
+                {["/settings", "/analytics"].reduce((acc, e) => acc && (location.pathname !== e), true)  && 
                     <Profile />
                 }
             </div>

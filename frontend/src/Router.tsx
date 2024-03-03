@@ -4,6 +4,7 @@ import MainLayout from './components/MainLayout';
 import ChatPage from './pages/ChatPage';
 import LoginPage from './pages/LoginPage';
 import SettingsPage from './pages/SettingsPage';
+import AnalyticsPage from './pages/AnalyticsPage'
 
 const Router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const Router = createBrowserRouter([
       {
         path: "/settings",
         element: <SettingsPage />
+      },
+      {
+        path: "/analytics",
+        element: <AnalyticsPage />
       },
       {
         path: "*",
