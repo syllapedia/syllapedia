@@ -1,6 +1,7 @@
 .profile {
     display: flex;
     cursor: pointer;
+    margin-right: 20px;
 }
 
 .avatar {

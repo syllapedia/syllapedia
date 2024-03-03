@@ -13,7 +13,7 @@ function Navbar({title}: {title?: string}) {
         <div className="navbar">
             <div>
                 {["/settings", "/analytics"].reduce((acc, e) => acc || (location.pathname === e), false) && 
-                    <IconButton size="large" onClick={() => navigate("/chat")} disableFocusRipple>
+                    <IconButton size="large" onClick={() => navigate("/chat")} disableFocusRipple sx={{padding: "18px"}}>
                         <KeyboardReturnIcon></KeyboardReturnIcon>
                     </IconButton>  
                 }
