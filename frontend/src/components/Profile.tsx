@@ -9,6 +9,7 @@ import "./Profile.css";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Typography, Avatar, Menu, MenuItem, FormControlLabel, Switch } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import InsightsIcon from '@mui/icons-material/Insights';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -43,6 +44,12 @@ function Profile() {
                             <Typography color={theme.palette.text.secondary} className="profile-text">{user.user.email}</Typography></>
                         }
                         <Menu open={openMenu} anchorEl={anchorEl} className="menu">
+                            { (user.user.permission === "admin" /* || user.user.permission === "instructor" */) &&
+                                <MenuItem className="menu-item" onClick={() => navigate("/analytics")}>
+                                    <InsightsIcon></InsightsIcon>
+                                    <Typography className="menu-text">Analytics</Typography>
+                                </MenuItem>
+                            }
                             { user.user.permission === "admin" ? 
                                 <MenuItem className="menu-item" onClick={() => navigate("/settings")}>
                                     <SettingsIcon></SettingsIcon>
