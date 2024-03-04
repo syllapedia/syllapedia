@@ -1,6 +1,29 @@
 import fitz
 import io
 import base64
+import re
+
+def preprocess_texts(texts):
+    # Defines delimiters
+    delimiters = [
+        '\t', '\u00A0', '\u200B',  # Whitespace Characters
+        '\n', '\r', '\u2028', '\u2029', '\f', '\\\\',  # Line Breaks and Escape Char
+        '—', '–', '…',  # Unicode Characters
+        '•', '-'  # List and Dash
+    ]
+    # Escaping delimiters that are special characters in regex (e.g., '\')
+    escaped_delimiters = [re.escape(delimiter) for delimiter in delimiters]
+    # Adding the regex pattern for numerical list indicators
+    regex_pattern = '|'.join(escaped_delimiters + [r'\d+\.\s*'])
+
+    processed_texts = []
+    for text in texts:
+        # Splitting the text by the regex pattern
+        pieces = re.split(regex_pattern, text)
+        processed_texts.extend(pieces)
+    
+    # Filter out empty strings and strip whitespace from each piece
+    return [piece.strip() for piece in processed_texts if piece.strip() and len(piece.strip()) >= 3]
 
 def highlight_text_in_pdf(base64_pdf, texts_to_highlight):
     # Converts blob into pdf
@@ -10,8 +33,12 @@ def highlight_text_in_pdf(base64_pdf, texts_to_highlight):
     # Opens pdf with fitz
     doc = fitz.open(stream=pdf_stream, filetype="pdf")
 
+    # Preprocess texts to highlight to handle newlines, page breaks, and bullets
+    processed_texts = preprocess_texts(texts_to_highlight)
+    print(processed_texts)
+
     # Highlights text in pdf
-    for text in texts_to_highlight:
+    for text in processed_texts:
         for page in doc:
             text_instances = page.search_for(text)
 
