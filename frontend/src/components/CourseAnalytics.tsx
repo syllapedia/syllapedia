@@ -39,7 +39,7 @@ function CourseAnalytics() {
                                     { data: [60, 50, 15, 25] },
                                 ]}
                                 xAxis={[{ data: ['Q1', 'Q2', 'Q3', 'Q4'], scaleType: 'band' }]}
-                                margin={{ top: 40, bottom: 40, left: 60, right: 60 }}
+                                margin={{ top: 30, bottom: 30, left: 50, right: 50 }}
                             />
                             :
                             <LineChart
@@ -49,6 +49,7 @@ function CourseAnalytics() {
                                         data: [2, 5.5, 2, 8.5, 1.5, 5],
                                     },
                                 ]}
+                                margin={{ top: 30, bottom: 30, left: 50, right: 50 }}
                                 sx={{ backgroundColor: theme.palette.background.paper, borderRadius: "10px", width: "100%" }} 
                             />
                         }

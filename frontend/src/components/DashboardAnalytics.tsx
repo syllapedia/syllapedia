@@ -14,9 +14,9 @@ function DashboardAnalytics() {
 
     const columns = [
         { field: 'id', headerName: 'ID' },
-        { field: 'courseName', headerName: 'Course Name' },
-        { field: 'question', headerName: 'Question' },
-        { field: 'frequency', headerName: 'Frequency', type: "number" },
+        { field: 'courseName', headerName: 'Course Name', width: 200 },
+        { field: 'question', headerName: 'Question', width: 300 },
+        { field: 'frequency', headerName: 'Frequency', type: "number", width: 150 },
     ];
 
     const rows = [
@@ -26,9 +26,9 @@ function DashboardAnalytics() {
     ];
 
     const columns2 = [
-        { field: 'id', headerName: 'ID', width: 80 },
-        { field: 'courseName', headerName: 'Course Name', width: 220 },
-        { field: 'questions', headerName: 'Total Questions', type: "number",  width: 201 },
+        { field: 'id', headerName: 'ID' },
+        { field: 'courseName', headerName: 'Course Name', width: 200 },
+        { field: 'questions', headerName: 'Total Questions', type: "number", width: 200 },
     ];
 
     const rows2 = [
@@ -51,9 +51,8 @@ function DashboardAnalytics() {
                             { data: [15, 25, 30, 50] },
                             { data: [60, 50, 15, 25] },
                         ]}
-                        height={300}
                         xAxis={[{ data: ['Q1', 'Q2', 'Q3', 'Q4'], scaleType: 'band' }]}
-                        margin={{ top: 40, bottom: 40, left: 60, right: 60 }}
+                        margin={{ top: 30, bottom: 30, left: 50, right: 50 }}
                     />
                 </Box>
                 <Box className="info-box">
@@ -108,8 +107,7 @@ function DashboardAnalytics() {
                             area: true,
                             },
                         ]}
-                        margin={{ top: 40, bottom: 40, left: 60, right: 60 }}
-                        
+                        margin={{ top: 30, bottom: 30, left: 50, right: 50 }}                        
                     />
                 </Box>
                 <Box className="info-box">

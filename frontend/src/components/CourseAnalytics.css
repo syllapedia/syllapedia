@@ -11,10 +11,10 @@
 }
 
 .courses-grid-info > div {
-    min-height: 300px;
+    min-height: 250px;
 }
 
-@media (max-height: 700px) {
+@media (max-height: 600px) {
     .courses-grid-info {
         grid-auto-rows: auto;
         overflow-y: scroll;
