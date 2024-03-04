@@ -46,7 +46,7 @@ function QuestionAnalytics() {
                                 },
                             },
                         }}
-                        sx={{maxWidth: "100%"}}
+                        className="data-grid"
                     />
                 </Box>
                 <Box className="info-box">

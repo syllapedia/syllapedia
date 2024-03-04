@@ -13,10 +13,10 @@ function DashboardAnalytics() {
     const theme = useTheme();
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 80 },
-        { field: 'courseName', headerName: 'Course Name', width: 140 },
-        { field: 'question', headerName: 'Question', width: 181 },
-        { field: 'frequency', headerName: 'Frequency', type: "number",  width: 100 },
+        { field: 'id', headerName: 'ID' },
+        { field: 'courseName', headerName: 'Course Name' },
+        { field: 'question', headerName: 'Question' },
+        { field: 'frequency', headerName: 'Frequency', type: "number" },
     ];
 
     const rows = [
@@ -73,7 +73,7 @@ function DashboardAnalytics() {
                                 },
                             },
                         }}
-                        sx={{maxWidth: "100%"}}
+                        className="data-grid"
                     />
                 </Box>
                 <Box className="info-box">
@@ -93,7 +93,7 @@ function DashboardAnalytics() {
                                 },
                             },
                         }}
-                        sx={{maxWidth: "100%"}}
+                        className="data-grid"
                     />
                 </Box>
                 <Box className="info-box">

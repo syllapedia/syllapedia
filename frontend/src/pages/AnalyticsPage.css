@@ -42,3 +42,9 @@
     align-items: center;
     justify-content: center;
 }
+
+.data-grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 0px 0px 10px 10px !important;
+}
