@@ -35,7 +35,6 @@ def highlight_text_in_pdf(base64_pdf, texts_to_highlight):
 
     # Preprocess texts to highlight to handle newlines, page breaks, and bullets
     processed_texts = preprocess_texts(texts_to_highlight)
-    print(processed_texts)
 
     # Highlights text in pdf
     for text in processed_texts:
