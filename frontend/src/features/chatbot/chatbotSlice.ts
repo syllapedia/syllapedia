@@ -1,13 +1,13 @@
 import { createAsyncThunk, createSlice, PayloadAction, } from "@reduxjs/toolkit"
 import { RootState } from "../../app/store"
-import { CourseInfo } from "../../models/courseModels"
+import { CourseInfo, Highlight } from "../../models/courseModels"
 import { askQuestion } from "../../services/httpService"
 
 export interface ChatbotState {
   course: CourseInfo | null,
   question: string,
   answer: string,
-  highlight: string,
+  highlight: Highlight | null,
   status: "idle" | "loading" | "failed"
 }
 
@@ -15,7 +15,7 @@ const initialState: ChatbotState = {
   course: null,
   question: "",
   answer: "",
-  highlight: "",
+  highlight: null,
   status: "idle"
 }
 

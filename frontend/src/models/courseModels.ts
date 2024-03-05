@@ -33,6 +33,11 @@ export interface courseQuery {
     title?: string,
 }
 
+export interface Highlight {
+    base64: string;
+    pageNumber: number;
+}
+
 export enum subjectToCode {
     "Computer Science" = "COMPSCI",
     "College of Inform and Comp Sci" = "CICS",

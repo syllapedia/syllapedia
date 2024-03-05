@@ -26,12 +26,14 @@ function ChatContent() {
     }, [chatbotState.course, chatbotState.answer])
 
     const openHighlight = (window: Window) => {
-        if (chatbotState.highlight) {
-            fetch(`data:application/pdf;base64,${chatbotState.highlight}`)
+        if (chatbotState.highlight && chatbotState.highlight.base64 && chatbotState.highlight.pageNumber != null) {
+            fetch(`data:application/pdf;base64,${chatbotState.highlight.base64}`)
                 .then(res => res.blob())
                 .then(blob => {
-                    const pdfUrl = URL.createObjectURL(blob);
-                    window.location.href = pdfUrl;
+                    if (chatbotState.highlight) {
+                        const pdfUrl = URL.createObjectURL(blob) + "#page=" + (chatbotState.highlight.pageNumber).toString();
+                        window.location.href = pdfUrl;
+                    }
                 }
             );
         }

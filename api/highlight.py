@@ -14,7 +14,7 @@ def preprocess_texts(texts):
     # Escaping delimiters that are special characters in regex (e.g., '\')
     escaped_delimiters = [re.escape(delimiter) for delimiter in delimiters]
     # Adding the regex pattern for numerical list indicators
-    regex_pattern = '|'.join(escaped_delimiters + [r'\d+\.\s*'])
+    regex_pattern = '|'.join(escaped_delimiters + [r'\d+\.\s'])
 
     processed_texts = []
     for text in texts:
@@ -26,6 +26,8 @@ def preprocess_texts(texts):
     return [piece.strip() for piece in processed_texts if piece.strip() and len(piece.strip()) >= 3]
 
 def highlight_text_in_pdf(base64_pdf, texts_to_highlight):
+    page_number = -1
+
     # Converts blob into pdf
     pdf_data = base64.b64decode(base64_pdf)
     pdf_stream = io.BytesIO(pdf_data)
@@ -43,6 +45,8 @@ def highlight_text_in_pdf(base64_pdf, texts_to_highlight):
 
             # Highlight each instance of the text
             for inst in text_instances:
+                if page_number == -1:
+                    page_number = page.number + 1
                 highlight = page.add_highlight_annot(inst)
 
     output_stream = io.BytesIO()
@@ -50,5 +54,5 @@ def highlight_text_in_pdf(base64_pdf, texts_to_highlight):
     doc.close()
 
     # Returns pdf converted into a blob
-    return base64.b64encode(output_stream.getvalue()).decode('utf-8')
+    return {"base64": base64.b64encode(output_stream.getvalue()).decode('utf-8'), "pageNumber":page_number}
 
