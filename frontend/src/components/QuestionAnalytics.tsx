@@ -13,11 +13,11 @@ function QuestionAnalytics() {
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 80 },
-        { field: 'courseName', headerName: 'Course Name', width: 160 },
-        { field: 'question', headerName: 'Question', width: 178 },
-        { field: 'success', headerName: 'Success Rate',  width: 100 },
-        { field: 'frequency', headerName: 'Frequency', type: "number",  width: 100 },
-        { field: 'likes', headerName: 'Likes', type: "number",  width: 100 },
+        { field: 'courseName', headerName: 'Course Name', width: 200 },
+        { field: 'question', headerName: 'Question', width: 300 },
+        { field: 'success', headerName: 'Success Rate',  width: 200 },
+        { field: 'frequency', headerName: 'Frequency', type: "number",  width: 150 },
+        { field: 'likes', headerName: 'Likes', type: "number",  width: 150 },
     ];
 
     const rows = [
