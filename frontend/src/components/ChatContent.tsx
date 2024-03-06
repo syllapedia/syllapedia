@@ -25,14 +25,13 @@ function ChatContent() {
         setIsTyped(false);
     }, [chatbotState.course, chatbotState.answer])
 
-    const openHighlight = (window: Window) => {
+    const openHighlight = async (ref: Window) => {
         if (chatbotState.highlight && chatbotState.highlight.base64 && chatbotState.highlight.pageNumber != null) {
-            fetch(`data:application/pdf;base64,${chatbotState.highlight.base64}`)
+            return await fetch(`data:application/pdf;base64,${chatbotState.highlight.base64}`)
                 .then(res => res.blob())
                 .then(blob => {
                     if (chatbotState.highlight) {
-                        const pdfUrl = URL.createObjectURL(blob) + "#page=" + (chatbotState.highlight.pageNumber).toString();
-                        window.location.href = pdfUrl;
+                        ref.location.href = URL.createObjectURL(blob) + "#page=" + (chatbotState.highlight.pageNumber).toString();
                     }
                 }
             );
@@ -79,9 +78,8 @@ function ChatContent() {
                         }}
                         onClick={() => {
                             const windowReference = window.open('', '_blank');
-                            if (windowReference) {
+                            if (windowReference)
                                 openHighlight(windowReference);
-                            }
                         }}
                     />
                 </div>
