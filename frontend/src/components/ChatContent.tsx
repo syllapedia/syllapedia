@@ -4,7 +4,7 @@ import Typewriter from 'typewriter-effect';
 import { useAppSelector } from "../app/hooks";
 import { selectChatbotState } from "../features/chatbot/chatbotSlice";
 import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
-import { useTheme } from "@mui/material";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 enum ChatRole {
     INTRO = 0,
@@ -21,6 +21,8 @@ function ChatContent() {
     const chatbotState = useAppSelector(selectChatbotState);  
     const [isTyped, setIsTyped] = useState(false);
 
+    const isMobile = useMediaQuery('(max-width: 520px)');
+
     useEffect(() => {
         setIsTyped(false);
     }, [chatbotState.course, chatbotState.answer])
@@ -31,7 +33,10 @@ function ChatContent() {
                 .then(res => res.blob())
                 .then(blob => {
                     if (chatbotState.highlight) {
-                        ref.location.href = URL.createObjectURL(blob) + "#page=" + (chatbotState.highlight.pageNumber).toString();
+                        let url = URL.createObjectURL(blob);
+                        if (!isMobile)
+                            url += "#page=" + (chatbotState.highlight.pageNumber).toString()
+                        ref.location.href = url;
                     }
                 }
             );
