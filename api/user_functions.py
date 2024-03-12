@@ -1,5 +1,6 @@
 from flask import Response, jsonify
 from database import db
+from graph_db_functions import add_instructor_node, remove_instructor_node
 from bson.objectid import ObjectId
 
 courses = db["Courses"]
@@ -87,6 +88,7 @@ def new_user(user_id, name, email):
             "courses": []
         }
         users.insert_one(new_user)
+        add_instructor_node(user_id, name)
 
         # Returns new user
         return jsonify(new_user), 200
@@ -216,6 +218,8 @@ def delete_user_data(user_id):
 
         # Deletes user
         users.delete_one({"_id": user_id})
+        remove_instructor_node(user_id)
+
         return Response(status=200)
     except:
         return Response("User could not be deleted", 400)

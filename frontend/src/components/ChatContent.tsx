@@ -34,7 +34,7 @@ function ChatContent() {
                 .then(blob => {
                     if (chatbotState.highlight) {
                         let url = URL.createObjectURL(blob);
-                        if (!isMobile)
+                        if (!isMobile && chatbotState.highlight.pageNumber > 0)
                             url += "#page=" + (chatbotState.highlight.pageNumber).toString()
                         ref.location.href = url;
                     }
