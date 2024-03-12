@@ -129,13 +129,13 @@ def _update_existing_question(tx, question, course_id, success):
     tx.run(query, text=question, course_id=course_id, success=success)
 
 def _create_question_node(tx, question, vector, course_id, success):
-    id = uuid.uuid4()
+    id = str(uuid.uuid4())
     query = (
         "MATCH (c:Course {id: $course_id})"
         "CREATE (q:Question {id: $id, text: $question, vector: $vector, course_id: $course_id, frequency: 1, success: $success, success_rate: $success_rate})"
         "MERGE (q)-[:Asked_For]->(c)"
     )
-    tx.run(query, id=str(id), question=question, vector=vector, course_id=course_id, success=success, success_rate=float(success))
+    tx.run(query, id=id, question=question, vector=vector, course_id=course_id, success=success, success_rate=float(success))
 
 def remove_question_node(text, course_id):
     with graph_db.session() as session:
