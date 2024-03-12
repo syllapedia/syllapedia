@@ -14,10 +14,12 @@ import SavedCourses from "./SavedCourses";
 import FindTab from "./FindTab";
 import CourseDialog from "./CourseDialog";
 import CreateTab from "./CreateTab";
+import { selectChatbotState, updateCourse } from "../features/chatbot/chatbotSlice";
 
 function Sidebar() {
     const userState = useAppSelector(selectUserState);
     const courseState = useAppSelector(selectCourseState);
+    const chatbotState = useAppSelector(selectChatbotState);
 
     const dispatch = useAppDispatch();
 
@@ -50,6 +52,9 @@ function Sidebar() {
     const newCourse = (userId: string, userCredential: string) => (info: {subject:string, number:string, title:string, syllabus: {base64: string, fileType: string}}) => {
         return createCourse({user_id: userId, ...info}, userCredential)
             .then(response => {
+                if (!chatbotState.course)  {
+                    dispatch(updateCourse(response));
+                }
                 if (userState.user) {
                     dispatch(updateCourseList({courses: courseState.courseList.concat(response), userId: userState.user._id}));
                 }
