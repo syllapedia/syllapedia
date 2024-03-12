@@ -4,7 +4,7 @@ import "./SettingsPage.css";
 import {  useAppSelector } from "../app/hooks";
 import { selectUserState, updateCredential, updateInfo } from "../features/user-info/userInfoSlice";
 import Navbar from "../components/Navbar";
-import { FormControlLabel, Switch, IconButton, Typography, Divider, Dialog, DialogTitle, LinearProgress, DialogContent, Grid, Button } from "@mui/material";
+import { FormControlLabel, Switch, IconButton, Typography, Divider, Dialog, DialogTitle, LinearProgress, DialogContent, Grid, Button, useMediaQuery } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteUser } from '../services/httpService';
@@ -15,6 +15,7 @@ import { useDispatch } from 'react-redux';
 function SettingsPage() {
     const user = useAppSelector(selectUserState);
     const theme = useTheme();
+    const isMobile = useMediaQuery('(max-width: 520px)');
     const navigate = useNavigate(); 
     const dispatch = useDispatch();
     const { toggleColorMode } = useContext(ColorModeContext);
@@ -37,25 +38,23 @@ function SettingsPage() {
             <Dialog open={deleteDialogOpen} onClose={() => !isDeleting && setDeleteDialog(false)}>
                 <DialogTitle>Delete Account</DialogTitle>
                     {isDeleting ? <LinearProgress style={{marginTop: "-3px"}}/> : <Divider></Divider>}
-                <DialogContent style={{width:"380px"}}>
+                <DialogContent style={{width:(isMobile ? "80%" : "380px")}}>
                     <Grid container spacing={1}>
                         <Grid item xs={12}>
-                            Are you sure you want to delete your account?
-                            <br></br>
-                            All account information will be permanently deleted and this action cannot be undone.
-                            Please confirm.
-                        </Grid><Grid item xs={6}>
+                            <Typography variant={(isMobile ? "body2" : "body1")}>
+                                Are you sure you want to delete your account?
+                                All account information will be permanently deleted and this action cannot be undone.
+                                Please confirm.
+                            </Typography>
                         </Grid>
-                        <Grid item xs={3}>
-                            <Button onClick={() => !isDeleting && setDeleteDialog(false)} size="medium" variant="outlined" color="inherit" disabled={isDeleting}>
+                        <Grid item xs={12} style={{display: "flex", justifyContent: "end"}}>
+                            <Button onClick={() => !isDeleting && setDeleteDialog(false)} size={isMobile ? "small" : "medium"} variant="outlined" color="inherit" disabled={isDeleting}>
                                 Cancel
                             </Button>
-                        </Grid>
-                        <Grid item xs={3}>
-                            <Button size="medium" variant="contained" color="primary"
+                            <Button size={isMobile ? "small" : "medium"} variant="contained" color="primary"
                                 onClick={() => user.user && del(user.user._id)}
                                 disabled={isDeleting}
-                                style={{ width: "100%" }}>
+                                style={{marginLeft: "8px"}}>
                                 Delete
                             </Button>
                         </Grid>
