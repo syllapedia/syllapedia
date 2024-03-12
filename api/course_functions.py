@@ -2,6 +2,7 @@ from flask import Response, jsonify, json
 import requests
 import base64
 from database import db
+from graph_db_functions import add_course_node, remove_course_node
 from bson.objectid import ObjectId
 from user_functions import add_new_course
 import fitz
@@ -96,6 +97,7 @@ def new_course(user_id, subject, number, title, syllabus):
             "syllabus": new_syllabus(syllabus["base64"], syllabus["fileType"])
         }
         courses.insert_one(new_course)
+        add_course_node(str(course_id), user_id, name)
 
         # Adds new course into instructor's courses
         add_new_course(user_id, course_id)
@@ -157,6 +159,9 @@ def delete_course_data(course_id):
     try:
         # Deletes course
         courses.delete_one({"_id": ObjectId(course_id)})
+
+        remove_course_node(course_id)
+
         return Response(status=200)
     except:
         return Response("Course could not be found", 404)

@@ -3,6 +3,7 @@ from openai_functions import openai_chat_respond
 from highlight import highlight_text_in_pdf
 from bson.objectid import ObjectId
 from database import db
+from graph_db_functions import add_question_node
 
 courses = db["Courses"]
 
@@ -25,6 +26,13 @@ def chat_respond(course_id, question):
     highlight = highlight_text_in_pdf(pdf, sources)
   except:
     return Response("Sources failed to complete", 400)
-
-  # Returns answer and whether it is valid
-  return jsonify({"answer": answer, "valid": response["valid"], "highlight": highlight}), 200
+  
+  try:
+    status = response["status"]
+    if status in [200, 404]:
+      add_question_node(question, course_id, 1 if status == 200 else 0)
+  except:
+    return Response("Status failure", 400)
+  
+  # Returns answer and its status
+  return jsonify({"answer": answer, "status": status, "highlight": highlight}), 200

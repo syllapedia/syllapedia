@@ -33,7 +33,7 @@ export const processQuestion = createAsyncThunk(
       courseId: state.chatbotState.course._id,
       question: state.chatbotState.question
     }, state.userState.userCredential)
-    .then(response => response.valid ? response : Promise.reject())
+    .then(response => response.status ? response : Promise.reject())
     .catch(error => error.name === "AbortError" ? { answer: "Response Terminated.", highlight: "" } : Promise.reject());
   }
 );
@@ -61,12 +61,16 @@ export const chatbotSlice = createSlice({
       })
       .addCase(processQuestion.fulfilled, (state, data) => {
         state.status = data.payload.highlight ? "idle" : "failed";
-        state.answer = data.payload.answer;
+        state.answer = data.payload.status === 200
+          ? data.payload.answer 
+          : data.payload.status === 404 
+            ? "I'm sorry, I could not find an answer to that question. Try rewording or asking your professor directly."
+            : "I'm sorry, I can not complete this request. Try rewording.";
         state.highlight = data.payload.highlight;
       })
       .addCase(processQuestion.rejected, (state) => {
         state.status = "failed";
-        state.answer = "I'm sorry, I'm unable to answer your request. Try re-wording it or checking your internet connection.";
+        state.answer = "I'm sorry, your request was unable to be completed. Try checking your internet connection.";
       })
   },
 });

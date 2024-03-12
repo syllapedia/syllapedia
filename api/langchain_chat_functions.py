@@ -11,6 +11,7 @@ courses = db["Courses"]
 class ChatResponse(BaseModel):
     answer: str = Field(description="answer to the query")
     sources: List[str] = Field(description="sources for the answer") 
+    status: int = Field(description="the status of the response") 
 
 def langchain_chat_respond(syllabus, query):
     try:
@@ -39,9 +40,9 @@ def langchain_chat_respond(syllabus, query):
         response = chain.invoke({"role": env_keys["LLM_ROLE"], "instructions": env_keys["LLM_INSTRUCTIONS"], "syllabus": syllabus, "query": query})
         answer = response["answer"]
         sources = response["sources"]
-        valid = len(sources) != 0
+        status = response["status"]
 
         # Returns answer, sources, and whether response executed successfully
-        return {"answer": answer, "sources": sources, "valid": valid}
+        return {"answer": answer, "sources": sources, "status": status}
     except:
-        return {"answer": "Response Failed to Complete", "sources": "Response Failed to Complete", "valid": False}
+        return {"answer": "Response Failed to Complete", "sources": "Response Failed to Complete", "status": 400}

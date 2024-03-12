@@ -17,9 +17,9 @@ def gemini_chat_respond(syllabus, query):
         response = json.loads(content.text)
         answer = response["answer"]
         sources = response["sources"]
-        valid = len(sources) != 0
+        status = response["status"]
         
         # Returns answer, sources, and whether response executed successfully
-        return {"answer": answer, "sources": sources, "valid": valid}
+        return {"answer": answer, "sources": sources, "status": status}
     except:
-        return {"answer": "Response Failed to Complete", "sources": "Response Failed to Complete", "valid": False}
+        return {"answer": "Response Failed to Complete", "sources": "Response Failed to Complete", "status": False}
