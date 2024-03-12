@@ -1,4 +1,4 @@
-import uuid
+from uuid import uuid4
 from database import graph_db, client
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
@@ -129,7 +129,7 @@ def _update_existing_question(tx, question, course_id, success):
     tx.run(query, text=question, course_id=course_id, success=success)
 
 def _create_question_node(tx, question, vector, course_id, success):
-    id = str(uuid.uuid4())
+    id = str(uuid4())
     query = (
         "MATCH (c:Course {id: $course_id})"
         "CREATE (q:Question {id: $id, text: $question, vector: $vector, course_id: $course_id, frequency: 1, success: $success, success_rate: $success_rate})"
