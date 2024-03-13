@@ -1,5 +1,5 @@
 from flask import Response, jsonify
-from openai_functions import openai_chat_respond
+from gemini_functions import gemini_chat_respond
 from highlight import highlight_text_in_pdf
 from bson.objectid import ObjectId
 from database import db
@@ -17,7 +17,7 @@ def chat_respond(course_id, question):
 
   # Gets question answer and the answer's sources
   try:
-    response = openai_chat_respond(txt, question)
+    response = gemini_chat_respond(txt, question)
     answer = response["answer"]
   except:
     return Response("Answer failed to complete", 400)
