@@ -1,5 +1,5 @@
 from flask import Response, jsonify
-from openai_functions import openai_chat_respond
+from gemini_functions import gemini_chat_respond
 from highlight import highlight_text_in_pdf
 from bson.objectid import ObjectId
 from database import db
