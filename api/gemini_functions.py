@@ -5,8 +5,8 @@ from authorization import env_keys
 
 courses = db["Courses"]
 
-def gemini_chat_respond(syllabus, query):
-    prompt_parts = [f"Role: {env_keys["LLM_ROLE"]}\n\nInstructions: {env_keys["LLM_INSTRUCTIONS"]}\n\nSyllabus: {syllabus}\n\nQuery: {query}"]
+def gemini_chat_respond(context, query):
+    prompt_parts = [f"Role: {env_keys["LLM_ROLE"]}\n\nInstructions: {env_keys["LLM_INSTRUCTIONS"]}\n\nContext: {context}\n\nQuery: {query}"]
     try:
         # Gets Gemini response
         genai.configure(api_key=env_keys['GOOGLE_API_KEY'])

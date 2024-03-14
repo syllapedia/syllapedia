@@ -13,19 +13,19 @@ class ChatResponse(BaseModel):
     sources: List[str] = Field(description="sources for the answer") 
     status: int = Field(description="the status of the response") 
 
-def langchain_chat_respond(syllabus, query):
+def langchain_chat_respond(context, query):
     try:
         # Creates output parser
         parser = JsonOutputParser(pydantic_object=ChatResponse)
 
         # Creates prompt
         prompt = PromptTemplate(
-            input_variables=["role", "instructions", "syllabus", "query"],
+            input_variables=["role", "instructions", "context", "query"],
             partial_variables={"format_instructions": parser.get_format_instructions()},
             template="""
             Role: {role}
             Instructions: {instructions}
-            Syllabus: {syllabus}
+            Context: {context}
             Query: {query}
             """
         )
@@ -37,7 +37,7 @@ def langchain_chat_respond(syllabus, query):
         chain = prompt | llm | parser
 
         # Gets response
-        response = chain.invoke({"role": env_keys["LLM_ROLE"], "instructions": env_keys["LLM_INSTRUCTIONS"], "syllabus": syllabus, "query": query})
+        response = chain.invoke({"role": env_keys["LLM_ROLE"], "instructions": env_keys["LLM_INSTRUCTIONS"], "context": context, "query": query})
         answer = response["answer"]
         sources = response["sources"]
         status = response["status"]
