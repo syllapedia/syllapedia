@@ -3,21 +3,21 @@ from gemini_functions import gemini_chat_respond
 from highlight import highlight_text_in_pdf
 from bson.objectid import ObjectId
 from database import db
-from graph_db_functions import add_question_node
+from graph_db_functions import add_question_node, context_search
 
 courses = db["Courses"]
 
 def chat_respond(course_id, question):
   # Gets syllabus as string and pdf blob
   try:
-    txt = courses.find_one({"_id":ObjectId(course_id)})["syllabus"]["txt"]
+    context = "\n\n".join(context_search(question, course_id))
     pdf = courses.find_one({"_id":ObjectId(course_id)})["syllabus"]["pdf"]
   except:
     return Response("Syllabus not found", 404)
 
   # Gets question answer and the answer's sources
   try:
-    response = gemini_chat_respond(txt, question)
+    response = openai_chat_respond(context, question)
     answer = response["answer"]
   except:
     return Response("Answer failed to complete", 400)
