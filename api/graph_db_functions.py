@@ -10,7 +10,7 @@ client = OpenAI()
 def get_db(user_id):
     # Gets graph db for visualization
     with graph_db.session() as session:
-        result = session.read_transaction(_nodes_relations, user_id)
+        result = session.execute_read(_nodes_relations, user_id)
         return result
 
 def _nodes_relations(tx, user_id, k=100):
@@ -60,7 +60,7 @@ def _nodes_relations(tx, user_id, k=100):
 def add_instructor_node(user_id, name):
     # Adds an instructor node
     with graph_db.session() as session:
-        session.write_transaction(_create_instructor_node, user_id, name)
+        session.execute_write(_create_instructor_node, user_id, name)
 
 def _create_instructor_node(tx, user_id, name):
     # Creates an instructor with a unique id and a name
@@ -72,7 +72,7 @@ def _create_instructor_node(tx, user_id, name):
 def remove_instructor_node(user_id):
     # Removes an instructor
     with graph_db.session() as session:
-        session.write_transaction(_delete_instructor_node, user_id)
+        session.execute_write(_delete_instructor_node, user_id)
 
 def _delete_instructor_node(tx, user_id):
     # Gets instructor, all of its courses, and all of the questions associated with the course
@@ -88,7 +88,7 @@ def _delete_instructor_node(tx, user_id):
 def add_course_node(course_id, user_id, name):
     # Adds a course node
     with graph_db.session() as session:
-        session.write_transaction(_create_course_node, course_id, user_id, name)
+        session.execute_write(_create_course_node, course_id, user_id, name)
 
 def _create_course_node(tx, course_id, user_id, name):
     # Finds the corresponding instructor node
@@ -105,8 +105,8 @@ def remove_course_node(course_id):
     # Removes a course node
     # Removes syllabus chunks associated with course
     with graph_db.session() as session:
-        session.write_transaction(_delete_course_node, course_id)
-        session.write_transaction(_delete_syllabus, course_id)
+        session.execute_write(_delete_course_node, course_id)
+        session.execute_write(_delete_syllabus, course_id)
 
 def _delete_course_node(tx, course_id):
     # Finds the course node and all of its questions
@@ -129,21 +129,21 @@ def add_question_node(question, course_id, success):
     # Adds a question node
     with graph_db.session() as session:
         # Checks if the question already exists
-        existing_question = session.write_transaction(_find_existing_question, question, course_id)
+        existing_question = session.execute_write(_find_existing_question, question, course_id)
 
         if existing_question:
             # Updates the preexisting question's frequency, success, and success_rate
-            session.write_transaction(_update_existing_question, question, course_id, success)
+            session.execute_write(_update_existing_question, question, course_id, success)
         else:
             # Creates a questions node
-            session.write_transaction(_create_question_node, question, vector, course_id, success)
+            session.execute_write(_create_question_node, question, vector, course_id, success)
 
             # Finds similar questions 
-            similar_questions = session.write_transaction(_find_similar_questions, vector, course_id, question)
+            similar_questions = session.execute_write(_find_similar_questions, vector, course_id, question)
 
             #Creates a similarity relation between similar questions
             for similar_question in similar_questions:
-                session.write_transaction(_create_similar_to_relation, {"text": question, "course_id": course_id}, similar_question)
+                session.execute_write(_create_similar_to_relation, {"text": question, "course_id": course_id}, similar_question)
 
 def _find_existing_question(tx, question, course_id):
     # Finds the question that corresponds to a question text and course_id
@@ -184,7 +184,7 @@ def _create_question_node(tx, question, vector, course_id, success):
 def remove_question_node(text, course_id):
     # Removes a question node
     with graph_db.session() as session:
-        session.write_transaction(_delete_question_node, text, course_id)
+        session.execute_write(_delete_question_node, text, course_id)
 
 def _delete_question_node(tx, text, course_id):
     # Finds the question that corresponds to a question text and course_id
@@ -210,7 +210,7 @@ def _find_similar_questions(tx, vector, course_id, query, k=4):
     for result in results:
         existing_vector = np.array(result["vector"]).reshape(1, -1)
         similarity = cosine_similarity(new_vector, existing_vector)[0][0]
-        if result["text"] != query: 
+        if result["text"] != query and result["course_id"] != course_id: 
             similarities.append((result["text"], similarity))
     
     # Sorts questions by similarity and gets top-k
@@ -236,7 +236,7 @@ def create_syllabus(course_id, syllabus):
 
     # Embeds syllabus chunks
     with graph_db.session() as session:
-        session.write_transaction(_embed_chunks, course_id, chunks)
+        session.execute_write(_embed_chunks, course_id, chunks)
 
 def _embed_chunks(tx, course_id, chunks):
     # Embeds each syllabus chunk
@@ -259,7 +259,7 @@ def _embed_chunks(tx, course_id, chunks):
 def remove_syllabus(course_id):
     # Removes a course's syllabus nodes
     with graph_db.session() as session:
-        session.write_transaction(_delete_syllabus, course_id)
+        session.execute_write(_delete_syllabus, course_id)
 
 def _delete_syllabus(tx, course_id):
     # Finds and deletes all syllabus nodes that are associated with a course_id
@@ -278,7 +278,7 @@ def context_search(query, course_id, k=4):
     
     # Gets all of the syllabus chunks
     with graph_db.session() as session:
-        syllabus_chunks = session.read_transaction(_fetch_syllabus_chunks, course_id)
+        syllabus_chunks = session.execute_read(_fetch_syllabus_chunks, course_id)
 
     # Creates a list of tuples with a syllabus chunk and its similarity to the query
     query_vector_np = np.array(query_vector).reshape(1, -1)
