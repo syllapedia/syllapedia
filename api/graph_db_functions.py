@@ -13,12 +13,14 @@ def get_db(user_id):
         result = session.execute_read(_nodes_relations, user_id)
         return result
 
-def _nodes_relations(tx, user_id, k=100):
+def _nodes_relations(tx, user_id, k=50):
     # Gets all of the questions that are asked for a course and instructed by the user
     # Orders questions by frequency and get the top-k
     # Gets all similarity relations of the questions
     query = """
-    MATCH (q: Question)-[Asked_For]->(c: Course)<-[Instructs]-(i: Instructor {id: $id})
+    MATCH (i: Instructor {id: $id})
+    OPTIONAL MATCH (i)-[Instructs]->(c: Course)
+    OPTIONAL MATCH (q: Question)-[Asked_For]->(c)
     WITH q, i, c
     ORDER BY q.frequency DESC
     LIMIT $k
@@ -37,25 +39,25 @@ def _nodes_relations(tx, user_id, k=100):
         c_node = record["c"]
         q_node = record["q"]
         
-        if i_node["id"] not in unique_nodes:
+        if i_node and i_node["id"] not in unique_nodes:
             nodes.append({"id": i_node["id"], "name": i_node["name"], "label": "Instructor"})
             unique_nodes.add(i_node["id"])
         
-        if c_node["id"] not in unique_nodes:
+        if c_node and c_node["id"] not in unique_nodes:
             nodes.append({"id": c_node["id"], "name": c_node["name"], "label": "Course"})
             relations.append({"source": c_node["user_id"], "target": c_node["id"], "type": "Instructs"})
             unique_nodes.add(c_node["id"])
 
-        if q_node["id"] not in unique_nodes:
+        if q_node and q_node["id"] not in unique_nodes:
             nodes.append({"id": q_node["id"], "text": q_node["text"], "frequency": q_node["frequency"], "success_rate": q_node["success_rate"], "label": "Question"})
             relations.append({"source": q_node["id"], "target": c_node["id"], "type": "Asked_For"})
             unique_nodes.add(q_node["id"])
         
-        if "similar_to" in record and record["similar_to"] is not None:
-            relations.append({"source": q_node["id"], "target": record["similar_to"][0]["id"], "type": "Similar_To"})
+        if "similar_to" in record and record["similar_to"] is not None and "id" in record["similar_to"][2]:
+            relations.append({"source": q_node["id"], "target": record["similar_to"][2]["id"], "type": "Similar_To"})
     
     # Returns a list of nodes and relations
-    return {"nodes": nodes, "relations": relations}
+    return {"nodes": nodes, "links": relations}
 
 def add_instructor_node(user_id, name):
     # Adds an instructor node
@@ -81,14 +83,16 @@ def _delete_instructor_node(tx, user_id):
         "MATCH (i:Instructor {id: $id})"
         "OPTIONAL MATCH (i)-[:Instructs]->(c:Course)"
         "OPTIONAL MATCH (q:Question)-[:Asked_For]->(c)"
-        "DETACH DELETE i, c, q"
+        "OPTIONAL MATCH (s:Syllabus)-[:Chunk_For]->(c)"
+        "DETACH DELETE i, c, s, q"
     )
     tx.run(query, id=user_id)
 
-def add_course_node(course_id, user_id, name):
+def add_course_node(course_id, user_id, name, syllabus):
     # Adds a course node
     with graph_db.session() as session:
         session.execute_write(_create_course_node, course_id, user_id, name)
+        session.execute_write(_create_syllabus, course_id, syllabus)
 
 def _create_course_node(tx, course_id, user_id, name):
     # Finds the corresponding instructor node
@@ -100,6 +104,29 @@ def _create_course_node(tx, course_id, user_id, name):
         "MERGE (i)-[:Instructs]->(c)"
     )
     tx.run(query, course_id=course_id, user_id=user_id, name=name)
+
+def _create_syllabus(tx, course_id, syllabus):
+    # Splits a syllabus string into chunks of text
+    splitter = TextSplitter.from_tiktoken_model("gpt-3.5-turbo")
+    chunks = splitter.chunks(syllabus, 500)
+
+    # Embeds syllabus chunks
+    embeds = [embed.embedding for embed in client.embeddings.create(
+        input=chunks,
+        model="text-embedding-3-small"
+    ).data]
+
+    # Creates a list of dictionaries with a chunk of text and an embedding vector
+    text_vectors = [{"text": chunk, "vector": vector} for chunk, vector in zip(chunks, embeds)]
+
+    # For each text_vector, creates a syllabus node with a course_id that corresponds to...
+    # ...the course that the syllabus is for, syllabus text, and an embedding vector
+    query = (
+        "MATCH (c:Course {id: $course_id}) "
+        "UNWIND $text_vectors AS text_vector "
+        "CREATE (s:Syllabus {course_id: $course_id, text: text_vector.text, vector: text_vector.vector})-[:Chunk_For]->(c) "
+    )
+    tx.run(query, course_id=course_id, text_vectors=text_vectors)
 
 def remove_course_node(course_id):
     # Removes a course node
@@ -195,7 +222,7 @@ def _delete_question_node(tx, text, course_id):
     )
     tx.run(query, text=text, course_id=course_id)
 
-def _find_similar_questions(tx, vector, course_id, query, k=4):
+def _find_similar_questions(tx, vector, course_id, question, k=4):
     # Finds every question that is associated with a course_id
     # Returns an array of dictionaries with text, course_id, and vector keys
     query = (
@@ -210,7 +237,7 @@ def _find_similar_questions(tx, vector, course_id, query, k=4):
     for result in results:
         existing_vector = np.array(result["vector"]).reshape(1, -1)
         similarity = cosine_similarity(new_vector, existing_vector)[0][0]
-        if result["text"] != query and result["course_id"] != course_id: 
+        if result["text"] != question: 
             similarities.append((result["text"], similarity))
     
     # Sorts questions by similarity and gets top-k
@@ -228,33 +255,6 @@ def _create_similar_to_relation(tx, question1, question2):
         "MERGE (q1)-[:Similar_To]->(q2)"
     )
     tx.run(query, question1=question1, question2=question2)
-
-def create_syllabus(course_id, syllabus):
-    # Splits a syllabus string into chunks of text
-    splitter = TextSplitter.from_tiktoken_model("gpt-3.5-turbo")
-    chunks = splitter.chunks(syllabus, 500)
-
-    # Embeds syllabus chunks
-    with graph_db.session() as session:
-        session.execute_write(_embed_chunks, course_id, chunks)
-
-def _embed_chunks(tx, course_id, chunks):
-    # Embeds each syllabus chunk
-    embeds = [embed.embedding for embed in client.embeddings.create(
-        input=chunks,
-        model="text-embedding-3-small"
-    ).data]
-
-    # Creates a list of dictionaries with a chunk of text and an embedding vector
-    text_vectors = [{"text": chunk, "vector": vector} for chunk, vector in zip(chunks, embeds)]
-
-    # For each text_vector, creates a syllabus node with a course_id that corresponds to...
-    # ...the course that the syllabus is for, syllabus text, and an embedding vector
-    query = (
-        "UNWIND $text_vectors AS text_vector "
-        "CREATE (s: Syllabus {course_id: $course_id, text: text_vector.text, vector: text_vector.vector})"
-    )
-    tx.run(query, course_id=course_id, text_vectors=text_vectors)
 
 def remove_syllabus(course_id):
     # Removes a course's syllabus nodes
@@ -298,8 +298,7 @@ def _fetch_syllabus_chunks(tx, course_id):
     # Finds every syllabus that is associated with a course id
     # Returns an array of dictionaries with id, course_id, text, and vector keys
     query = (
-        "MATCH (s: Syllabus {course_id: $course_id})"
+        "MATCH (s: Syllabus)-[:Chunk_For]->(c: Course {id: $course_id})"
         "RETURN s.id AS id, s.course_id AS course_id, s.text AS text, s.vector AS vector"
     )
-    result = tx.run(query, course_id=course_id).data()
-    return result
+    return tx.run(query, course_id=course_id).data()

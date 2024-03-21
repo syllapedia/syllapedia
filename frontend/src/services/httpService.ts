@@ -26,6 +26,7 @@ export const userSearchCourses = async (id: string, query: courseQuery, authToke
 }
 export const createUser = async (info: UserInfo, authToken: string) => await httpPost('/user', authToken, { "user_id": info._id, "name": info.name, "email": info.email });
 export const askQuestion = async (info: QuestionInfo, authToken: string) => await httpPost('/chat', authToken, { "course_id": info.courseId, "question": info.question }); 
+export const getGraphDB = async (id: string, authToken: string) => await httpGet(`/graph_db/${id}`, authToken);
 
 async function httpGet(url: string, authToken: string) {
     const requestInfo = { 
