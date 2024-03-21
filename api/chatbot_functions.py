@@ -22,6 +22,7 @@ def chat_respond(course_id, question):
     answer = response["answer"]
   except:
     return Response("Answer failed to complete", 400)
+  
   try:
     sources = response["sources"]
     highlight = highlight_text_in_pdf(pdf, sources)

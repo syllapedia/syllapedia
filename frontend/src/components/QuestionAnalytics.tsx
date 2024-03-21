@@ -4,12 +4,25 @@ import BubbleChartIcon from '@mui/icons-material/BubbleChart';
 import {  useAppSelector } from "../app/hooks";
 import { selectUserState } from "../features/user-info/userInfoSlice";
 import { useTheme } from '@mui/material/styles';
-import { Box, Typography } from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
+import QuestionCluster from "./QuestionCluster";
+import { useEffect, useState } from "react";
+import { getGraphDB } from "../services/httpService";
 
 function QuestionAnalytics() {
     const user = useAppSelector(selectUserState);
     const theme = useTheme();
+    const [graph_db, setGraph_db] = useState(null);
+
+    useEffect(() => {
+        const fetchGraphDB = async () => {
+          if (user.user) {
+            setGraph_db(await getGraphDB(user.user._id, user.userCredential));
+          }
+        };
+        fetchGraphDB();
+      }, [user.user]);
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 80 },
@@ -50,10 +63,10 @@ function QuestionAnalytics() {
                     />
                 </Box>
                 <Box className="info-box">
-                    <Typography variant="h6" color={theme.palette.text.primary} sx={{ textAlign: "center"}}>
-                        Coming Soon...
-                    </Typography>
-                    <BubbleChartIcon fontSize={"large"} sx={{color: theme.palette.text.primary}}/>
+                    {graph_db 
+                        ? <QuestionCluster data={graph_db}/>
+                        : <CircularProgress color="primary"/>
+                    }
                 </Box>
             </div>
         </div> 

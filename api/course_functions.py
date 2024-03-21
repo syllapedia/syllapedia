@@ -2,7 +2,7 @@ from flask import Response, jsonify, json
 import requests
 import base64
 from database import db
-from graph_db_functions import add_course_node, remove_course_node, create_syllabus, remove_syllabus
+from graph_db_functions import add_course_node, remove_course_node, remove_syllabus
 from bson.objectid import ObjectId
 from user_functions import add_new_course
 import fitz
@@ -43,7 +43,7 @@ def to_pdf(file, file_type):
     
     return pdf_base64
     
-def new_syllabus(course_id, original64, file_type):
+def new_syllabus(original64, file_type):
     # Converts original into a pdf
     if file_type == "application/pdf":
         pdf = original64
@@ -61,8 +61,6 @@ def new_syllabus(course_id, original64, file_type):
     txt = ""
     for page in doc:
         txt += page.get_text() + "\n"
-
-    create_syllabus(course_id, txt)
 
     # Returns syllabi
     return {
@@ -88,6 +86,7 @@ def new_course(user_id, subject, number, title, syllabus):
         instructor = users.find_one({"_id": user_id})
 
         # Creates a new course
+        syllabus = new_syllabus(syllabus["base64"], syllabus["fileType"])
         new_course = {
             "_id": course_id,
             "name": name,
@@ -95,10 +94,10 @@ def new_course(user_id, subject, number, title, syllabus):
             "number": number,
             "title": title,
             "instructor": {"_id": instructor["_id"], "name": instructor["name"], "email": instructor["email"]},
-            "syllabus": new_syllabus(str(course_id), syllabus["base64"], syllabus["fileType"])
+            "syllabus": syllabus
         }
         courses.insert_one(new_course)
-        add_course_node(str(course_id), user_id, name)
+        add_course_node(str(course_id), user_id, name, syllabus["txt"])
 
         # Adds new course into instructor's courses
         add_new_course(user_id, course_id)
