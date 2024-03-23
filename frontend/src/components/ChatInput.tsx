@@ -89,7 +89,7 @@ function ChatInput() {
                     onClick={!isEnabled && chatbotState.status !== "loading" ? handleReset : () => {}} 
                 >
                     {
-                        isEnabled || chatbotState.status === "loading" ?
+                        !chatbotState.course || isEnabled || chatbotState.status === "loading" ?
                             <SendIcon 
                                 style={{
                                     opacity: isEnabled ? 1 : 0.3, 

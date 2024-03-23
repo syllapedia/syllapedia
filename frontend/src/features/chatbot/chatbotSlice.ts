@@ -60,7 +60,7 @@ export const chatbotSlice = createSlice({
         state.status = "loading";
       })
       .addCase(processQuestion.fulfilled, (state, data) => {
-        state.status = data.payload.highlight ? "idle" : "failed";
+        state.status = data.payload.highlight && data.payload.status === 200 ? "idle" : "failed";
         state.answer = data.payload.status === 200
           ? data.payload.answer 
           : data.payload.status === 404 
