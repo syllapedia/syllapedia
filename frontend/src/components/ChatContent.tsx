@@ -20,12 +20,9 @@ function ChatContent() {
     const theme = useTheme()
     const chatbotState = useAppSelector(selectChatbotState);  
     const [isTyped, setIsTyped] = useState(false);
-
     const isMobile = useMediaQuery('(max-width: 520px)');
 
-    useEffect(() => {
-        setIsTyped(false);
-    }, [chatbotState.course, chatbotState.answer])
+    useEffect(() => { if (isTyped) setIsTyped(false) }, [chatbotState.course, chatbotState.status])
 
     const openHighlight = async (ref: Window) => {
         if (chatbotState.highlight && chatbotState.highlight.base64 && chatbotState.highlight.pageNumber != null) {
@@ -66,30 +63,33 @@ function ChatContent() {
                     }).start() 
                 }}
             /> 
-        : role === ChatRole.ANSWER && chatbotState.status !== 'failed' ? (
+        : 
             <div style={{ margin: 0 }}>
                 { text }
-                <div style={{ display: 'inline-block', position: 'relative' }}>
-                    <FormatQuoteIcon 
-                        style={{ 
-                            verticalAlign: 'bottom', 
-                            marginLeft: 5, 
-                            fontSize: 'medium', 
-                            color: "#e5e5e5",
-                            backgroundColor: theme.palette.primary.main, 
-                            borderRadius: 5, 
-                            padding: '2px 3px 2px 2px',
-                            cursor: 'pointer' 
-                        }}
-                        onClick={() => {
-                            const windowReference = window.open('', '_blank');
-                            if (windowReference)
-                                openHighlight(windowReference);
-                        }}
-                    />
-                </div>
-            </div>
-        ) : text;
+                { 
+                    isTyped && role === ChatRole.ANSWER && chatbotState.status !== 'failed' ? (
+                        <div style={{ display: 'inline-block', position: 'relative' }}>
+                            <FormatQuoteIcon 
+                                style={{ 
+                                    verticalAlign: 'bottom', 
+                                    marginLeft: 5, 
+                                    fontSize: 'medium', 
+                                    color: "#e5e5e5",
+                                    backgroundColor: theme.palette.primary.main, 
+                                    borderRadius: 5, 
+                                    padding: '2px 3px 2px 2px',
+                                    cursor: 'pointer' 
+                                }}
+                                onClick={() => {
+                                    const windowReference = window.open('', '_blank');
+                                    if (windowReference)
+                                        openHighlight(windowReference);
+                                }}
+                            />
+                        </div>
+                    ) : ""
+                }
+            </div>;
     }; 
 
     const ChatbotPending = () => (
