@@ -130,7 +130,7 @@ function SavedCourses() {
             : 
                 (courseState.courseList.length ? 
                     courseState.courseList.map(course => (
-                        <ListItem key={course.name} disablePadding>
+                        <ListItem key={course.name} sx={{padding: "4px 0px"}}>
                             <ListItemButton 
                                 disableTouchRipple 
                                 onClick={() => dispatch(updateCourse(course))}

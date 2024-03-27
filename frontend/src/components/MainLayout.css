@@ -29,6 +29,8 @@
     border-radius: 10px; 
     display: flexbox; 
     white-space: nowrap;
+    border: 2px solid;
+    border-color: var(--background-default);
 }
 
 ::-webkit-scrollbar-track {

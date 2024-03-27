@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { useTheme } from '@mui/material/styles';
-import { CircularProgress, Grid, IconButton, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
+import { CircularProgress, Divider, Grid, IconButton, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import { selectUserState } from '../features/user-info/userInfoSlice';
@@ -73,8 +73,8 @@ function CourseSearch() {
     
     return (
         <div className="tab-content" onKeyDown={handleKeyPress}>
-            <Grid container spacing={1} className="search-components">
-                <Grid item xs={7}>
+            <Grid container className="search-components">
+                <Grid item xs={7} padding={"0px 8px 8px 0px"}>
                     <SubjectDropdown handleSubject={coursePropertiesHandler("subject")} size="small"/>
                 </Grid>
                 <Grid item xs={5}>
@@ -89,12 +89,13 @@ function CourseSearch() {
                 ? <div className="progress"><CircularProgress color="primary"/></div>
                 : found.status === "success" 
                     ? found.courses.length 
-                        ? <List disablePadding> {
+                        ? <List disablePadding sx={{overflowY: "auto"}}> {
                             found.courses.map(course => (
-                                <ListItem key={course.name} disablePadding>
+                                <ListItem key={course.name} sx={{padding: "4px 0px"}}>
                                     <ListItemButton 
                                         disableRipple 
                                         className="course"
+                                        sx={{ cursor: "default", backgroundColor: theme.palette.background.paper, '&.MuiListItemButton-root:hover':{bgcolor: 'transparent'} }}
                                     >
                                     <ListItemText
                                             primary={
