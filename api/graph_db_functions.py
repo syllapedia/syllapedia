@@ -108,7 +108,7 @@ def _create_course_node(tx, course_id, user_id, name):
 def _create_syllabus(tx, course_id, syllabus):
     # Splits a syllabus string into chunks of text
     splitter = TextSplitter.from_tiktoken_model("gpt-3.5-turbo")
-    chunks = splitter.chunks(syllabus, 500)
+    chunks = splitter.chunks(syllabus, 1000)
 
     # Embeds syllabus chunks
     embeds = [embed.embedding for embed in client.embeddings.create(
@@ -245,7 +245,7 @@ def _find_similar_questions(tx, vector, course_id, question, k=4):
     top_similarities = similarities[:k] if len(similarities) > k else similarities
 
     # Returns a list of dictionaries that represent questions that are above some similarity threshold
-    return [dict(text=text, course_id=course_id) for text, similarity in top_similarities if similarity > 0.5]
+    return [dict(text=text, course_id=course_id) for text, similarity in top_similarities if similarity > 0.55]
 
 def _create_similar_to_relation(tx, question1, question2):
     # Finds two questions that correspond to question text and a course_id

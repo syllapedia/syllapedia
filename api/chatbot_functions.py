@@ -1,5 +1,5 @@
 from flask import Response, jsonify
-import threading
+from threading import Thread
 from openai_functions import openai_chat_respond
 from highlight import highlight_text_in_pdf
 from bson.objectid import ObjectId
@@ -25,7 +25,7 @@ def chat_respond(course_id, question):
   
   try:
     sources = response["sources"]
-    highlight = highlight_text_in_pdf(pdf, sources)
+    highlight = highlight_text_in_pdf(pdf, context, sources)
   except:
     return Response("Sources failed to complete", 400)
   
@@ -35,7 +35,7 @@ def chat_respond(course_id, question):
     def run_add_question_node():
       add_question_node(question, course_id, 1 if status == 200 else 0)
     if status in [200, 404]:
-      thread = threading.Thread(target=run_add_question_node)
+      thread = Thread(target=run_add_question_node)
       thread.start()
   except:
     return Response("Status failure", 400)
