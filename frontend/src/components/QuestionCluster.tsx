@@ -57,7 +57,7 @@ const QuestionCluster: React.FC<ForceDirectedGraphProps> = ({ data }) => {
         const simulation = d3.forceSimulation(nodes)
             .force("charge", d3.forceManyBody().strength(-20))
             .force("link", d3.forceLink(links).id((d: any) => d.id).distance((d: any) => d.type === "Instructs" ? 100 : 30))
-            .force("collide", d3.forceCollide().radius(20))
+            .force("collide", d3.forceCollide().radius((d: any) => d.type === "Instructs" ? 40 : 20))
             .force("center", d3.forceCenter(width / 2, height / 2).strength(0.3))
             .velocityDecay(0.7)
             .alphaDecay(0.02)

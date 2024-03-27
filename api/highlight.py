@@ -1,33 +1,53 @@
 import fitz
+from fuzzywuzzy import process
 import io
 import base64
 import re
 
-def preprocess_texts(texts):
-    # Defines delimiters
-    delimiters = [
-        '\t', '\u00A0', '\u200B',  # Whitespace Characters
-        '\n', '\r', '\u2028', '\u2029', '\f', '\\\\',  # Line Breaks and Escape Char
-        '—', '–', '…',  # Unicode Characters
-        '•', '-'  # List and Dash
-    ]
-    # Escaping delimiters that are special characters in regex (e.g., '\')
+def process_text(text, delimiters):
+    # Escapes delimiters that are special characters in regex
     escaped_delimiters = [re.escape(delimiter) for delimiter in delimiters]
-    # Adding the regex pattern for numerical list indicators
-    regex_pattern = '|'.join(escaped_delimiters + [r'\d+\.\s'])
+    # Adds the regex pattern
+    regex_pattern = '|'.join(escaped_delimiters)
 
-    processed_texts = []
-    for text in texts:
-        # Splitting the text by the regex pattern
-        pieces = re.split(regex_pattern, text)
-        processed_texts.extend(pieces)
+    # Splits the text by the regex pattern
+    pieces = re.split(regex_pattern, text)
     
-    # Filter out empty strings and strip whitespace from each piece
-    return [piece.strip() for piece in processed_texts if piece.strip() and len(piece.strip()) >= 3]
+    # Filters out empty strings and strips whitespace from each piece
+    processed_pieces = [piece.strip() for piece in pieces if piece.strip() and len(piece.strip()) >= 3]
 
-def highlight_text_in_pdf(base64_pdf, texts_to_highlight):
-    page_number = -1
+    return processed_pieces
 
+def find_text_in_context(text, context):
+    # Separates text by whitespace into a list of character chunks
+    processed_text = process_text(text, [' ', '\t', '\u00A0', '\u200B', '\n', '\r', '\u2028', '\u2029', '\f', '\\\\'])
+
+    # Handles if there is no text to find when processed
+    if not processed_text:
+        return text
+    
+    # Finds every substring that matches the start and stop of the processed text
+    start, stop = processed_text[0], processed_text[-1]
+    substrings = []
+    start_positions = []
+
+    for i in range(len(context)):
+        if context[i:i + len(start)] == start:
+            start_positions.append(i)
+        if context[i:i + len(stop)] == stop:
+            for start_pos in start_positions:
+                if i + len(stop) > start_pos:
+                    substrings.append(context[start_pos:i + len(stop)])
+    
+    # Handles if there are no substrings found
+    if not substrings:
+        return text
+
+    # Matches the closest substring, depending on a threshold, to the original text
+    found_text_score = process.extractOne(text, substrings)
+    return found_text_score[0] if found_text_score and found_text_score[1] > 80 else text
+
+def highlight_text_in_pdf(base64_pdf, context, texts_to_highlight):
     # Converts blob into pdf
     pdf_data = base64.b64decode(base64_pdf)
     pdf_stream = io.BytesIO(pdf_data)
@@ -35,24 +55,32 @@ def highlight_text_in_pdf(base64_pdf, texts_to_highlight):
     # Opens pdf with fitz
     doc = fitz.open(stream=pdf_stream, filetype="pdf")
 
-    # Preprocess texts to highlight to handle newlines, page breaks, and bullets
-    processed_texts = preprocess_texts(texts_to_highlight)
-
     # Highlights text in pdf
-    for text in processed_texts:
+    page_numbers = set()
+
+    # Finds the text in the context and handle line breaks
+    processed_texts = []
+    for text in texts_to_highlight:
+        text_in_context = find_text_in_context(text, context)
+        processed_texts += process_text(text_in_context, ['\n', '\r', '\u2028', '\u2029', '\f', '\\\\'])
+
+    for text in processed_texts:        
         for page in doc:
+            # Searches for every instance of processed text in a page
             text_instances = page.search_for(text)
 
-            # Highlight each instance of the text
+            # Highlights each instance of the text
             for inst in text_instances:
-                if page_number == -1:
-                    page_number = page.number + 1
+                page_numbers.add(page.number + 1)
                 highlight = page.add_highlight_annot(inst)
+
+    # Sets page number to earliest highlight if there is a highlight
+    page_number = min(page_numbers) if len(page_numbers) else -1
 
     output_stream = io.BytesIO()
     doc.save(output_stream)
     doc.close()
 
     # Returns pdf converted into a blob
-    return {"base64": base64.b64encode(output_stream.getvalue()).decode('utf-8'), "pageNumber":page_number}
+    return {"base64": base64.b64encode(output_stream.getvalue()).decode('utf-8'), "pageNumber": page_number}
 
